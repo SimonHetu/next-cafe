@@ -18,6 +18,28 @@ enum RoastLevel {
   MEDIUM
   DARK
 }
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  CART
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  FAILED
+  REFUNDED
+}
+
+// enum role
 
 //============================================================
 // MODELS
@@ -27,9 +49,8 @@ model User {
   id        String    @id @default(cuid())
   name      String
   email     String    @unique
-  role      String    @default("customer")
+  role      UserRole  @default(CUSTOMER)
   orders    Order[]
-  carts     Cart[]
   addresses Address[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -44,8 +65,7 @@ model Product {
   price       Decimal   @db.Decimal(10, 2)
   stockQuantity Int     @default(0)
   isActive    Boolean   @default(true)
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  items       Item[]
   roastLevel  RoastLevel
   origin      String? // Table possible
   flavorNotes ProductFlavorNote[]
@@ -65,65 +85,56 @@ model FlavorNote {
 model ProductFlavorNote {
   productId     String
   flavorNoteId  String
-  @@id([productId, flavorNoteId])
 
   product       Product       @relation(fields: [productId], references: [id])
   flavorNote    FlavorNote    @relation(fields: [flavorNoteId], references: [id])
+
+  @@id([productId, flavorNoteId])
 }
 
 //------------------------------------------------------------
 // Ordering
 //------------------------------------------------------------
 
-model CartItem {
+model Item {
   id          String      @id @default(cuid())
-  cartId      String
-  productId   String
-  quantity    Int
-  unitPrice   Decimal     @db.Decimal(10, 2)
-
-  cart        Cart        @relation(fields: [cartId], references: [id])
-  product     Product     @relation(fields: [productId], references: [id])
-}
-
-model Cart {
-  id          String      @id @default(cuid())
-  userId      String?
-  user        User?       @relation(fields: [userId], references: [id])
-  items       CartItem[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-}
-
-
-model Order {
-  id                String    @id @default(cuid())
-  userId            String
-  status            String    @default("pending")
-  paymentStatus     String    @default("unpaid")
-  subtotal          Decimal   @db.Decimal(10, 2)
-  shippingCost      Decimal   @db.Decimal(10, 2)
-  total             Decimal   @db.Decimal(10, 2)
-  shippingAddressId String?
-
-  user              User      @relation(fields: [userId], references: [id])
-  items             OrderItem[]
-  
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-}
-
-model OrderItem {
-  id          String    @id @default(cuid())
   orderId     String
   productId   String?
   productName String
   quantity    Int
-  unitPrice   Decimal   @db.Decimal(10, 2)
-  lineTotal   Decimal   @db.Decimal(10, 2)
+  unitPrice   Decimal     @db.Decimal(10, 2)
 
-  order       Order     @relation(fields: [orderId], references: [id])
-  product     Product?  @relation(fields: [productId], references: [id])
+  order       Order       @relation(fields: [orderId], references: [id])
+  product     Product?    @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
+}
+
+model Order {
+  id                String        @id @default(cuid())
+  userId            String?
+  status            OrderStatus   @default(CART)
+  paymentStatus     PaymentStatus @default(UNPAID)
+  subtotal          Decimal       @db.Decimal(10, 2)
+  shippingCost      Decimal       @db.Decimal(10, 2)
+  total             Decimal       @db.Decimal(10, 2)
+  
+  // Snapshot
+  shippingFirstName     String?
+  shippingLastName      String?
+  shippingLine1         String?
+  shippingLine2         String?
+  shippingCity          String?
+  shippingStateProvince String?
+  shippingPostalCode    String?
+  shippingCountry       String?
+  shippingPhone         String?
+
+  user              User?     @relation(fields: [userId], references: [id])
+  items             Item[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 model Address {

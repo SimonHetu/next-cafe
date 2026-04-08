@@ -5,7 +5,7 @@ npx prisma format
 npx prisma generate
 
 ### Appliquer le schema à la base de données
-npx prisma migrate dev --name init
+npx prisma migrate dev --name update
 
 ### Lancer l'application
 npm run dev
