@@ -1,0 +1,148 @@
+//============================================================
+// INITIALISATION
+//============================================================
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//============================================================
+// ENUMS
+//============================================================
+enum RoastLevel {
+  LIGHT
+  MEDIUM
+  DARK
+}
+
+//============================================================
+// MODELS
+//============================================================
+
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  role      String    @default("customer")
+  orders    Order[]
+  carts     Cart[]
+  addresses Address[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String
+  imageUrl    String?
+  price       Decimal   @db.Decimal(10, 2)
+  stockQuantity Int     @default(0)
+  isActive    Boolean   @default(true)
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+  roastLevel  RoastLevel
+  origin      String? // Table possible
+  flavorNotes ProductFlavorNote[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+//------------------------------------------------------------
+// Flavor Notes
+//------------------------------------------------------------
+model FlavorNote {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  products    ProductFlavorNote[]
+}
+
+model ProductFlavorNote {
+  productId     String
+  flavorNoteId  String
+  @@id([productId, flavorNoteId])
+
+  product       Product       @relation(fields: [productId], references: [id])
+  flavorNote    FlavorNote    @relation(fields: [flavorNoteId], references: [id])
+}
+
+//------------------------------------------------------------
+// Ordering
+//------------------------------------------------------------
+
+model CartItem {
+  id          String      @id @default(cuid())
+  cartId      String
+  productId   String
+  quantity    Int
+  unitPrice   Decimal     @db.Decimal(10, 2)
+
+  cart        Cart        @relation(fields: [cartId], references: [id])
+  product     Product     @relation(fields: [productId], references: [id])
+}
+
+model Cart {
+  id          String      @id @default(cuid())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
+  items       CartItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+
+model Order {
+  id                String    @id @default(cuid())
+  userId            String
+  status            String    @default("pending")
+  paymentStatus     String    @default("unpaid")
+  subtotal          Decimal   @db.Decimal(10, 2)
+  shippingCost      Decimal   @db.Decimal(10, 2)
+  total             Decimal   @db.Decimal(10, 2)
+  shippingAddressId String?
+
+  user              User      @relation(fields: [userId], references: [id])
+  items             OrderItem[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model OrderItem {
+  id          String    @id @default(cuid())
+  orderId     String
+  productId   String?
+  productName String
+  quantity    Int
+  unitPrice   Decimal   @db.Decimal(10, 2)
+  lineTotal   Decimal   @db.Decimal(10, 2)
+
+  order       Order     @relation(fields: [orderId], references: [id])
+  product     Product?  @relation(fields: [productId], references: [id])
+}
+
+model Address {
+  id            String    @id @default(cuid())
+  userId        String
+  fullName      String
+  line1         String
+  line2         String?
+  city          String
+  stateProvince String
+  postalCode    String
+  country       String
+  phone         String?
+
+  user          User      @relation(fields: [userId], references: [id])
+}
+
+
+
+
+
+
