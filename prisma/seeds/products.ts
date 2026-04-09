@@ -92,6 +92,5 @@ export async function seedProducts(prisma: PrismaClient) {
         roastLevel: RoastLevel.DARK,
       },
     ],
-    skipDuplicates: true,
   })
 }

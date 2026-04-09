@@ -21,6 +21,5 @@ export async function seedFlavorNotes(prisma: PrismaClient) {
       "Creamy",
       "Smoky",
     ].map((name) => ({ name })),
-    skipDuplicates: true,
   });
 }

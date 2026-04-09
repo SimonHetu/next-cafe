@@ -65,12 +65,11 @@ export async function seedUsers(prisma: PrismaClient) {
         role: UserRole.CUSTOMER,
       },
       {
-        firstName: "Maître",
-        lastName: "Barista",
+        firstName: "Admin",
+        lastName: "Admin",
         email: "admin@cafe.dev",
         role: UserRole.ADMIN,
       },
     ],
-    skipDuplicates: true,
   });
 }

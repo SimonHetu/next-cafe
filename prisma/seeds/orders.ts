@@ -1,15 +1,20 @@
 import { PrismaClient, OrderStatus, PaymentStatus } from "../../app/generated/prisma/client";
 
+// Seed de commandes avec items et snapshot de livraison
 export async function seedOrders(prisma: PrismaClient) {
+
+  // Récupère les users et produits existants
   const users = await prisma.user.findMany();
   const products = await prisma.product.findMany();
 
+  // Helper pour trouver user/product
   const getUser = (email: string) =>
     users.find((u) => u.email === email);
 
   const getProduct = (slug: string) =>
     products.find((p) => p.slug === slug);
 
+  // Création de commande
   async function createOrder({
     userEmail,
     status,
@@ -20,14 +25,17 @@ export async function seedOrders(prisma: PrismaClient) {
     items: { slug: string; quantity: number }[];
   }) {
     const user = getUser(userEmail);
+
     if (!user) return;
 
     let subtotal = 0;
 
+    // Création initiale
     const order = await prisma.order.create({
       data: {
         userId: user.id,
         status,
+        // Paiement dépend du status
         paymentStatus: status === OrderStatus.CART ? PaymentStatus.UNPAID : PaymentStatus.PAID,
         subtotal: 0,
         shippingCost: 5,
@@ -35,6 +43,7 @@ export async function seedOrders(prisma: PrismaClient) {
       },
     });
 
+    // Ajout des items
     for (const item of items) {
       const product = getProduct(item.slug);
       if (!product) continue;
@@ -53,14 +62,16 @@ export async function seedOrders(prisma: PrismaClient) {
       });
     }
 
+    // Calcul du total final
     const total = subtotal + 5;
 
+    // Mise à jour de la commande avec les totaux + snapshot shipping
     await prisma.order.update({
       where: { id: order.id },
       data: {
         subtotal,
         total,
-        // snapshot shipping si pas CART
+        // Snapshot des infos de livraison si commande validée
         ...(status !== OrderStatus.CART && {
           shippingFirstName: user.firstName,
           shippingLastName: user.lastName,
@@ -74,6 +85,7 @@ export async function seedOrders(prisma: PrismaClient) {
     });
   }
 
+  // Création des commandes de test
   await createOrder({
     userEmail: "stephanie.cafeine@example.com",
     status: OrderStatus.CART,

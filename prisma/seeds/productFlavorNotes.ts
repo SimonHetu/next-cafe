@@ -25,7 +25,7 @@ export async function seedProductFlavorNotes(prisma: PrismaClient) {
     },
     {
       product: "c-brew",
-      notes: ["Smoky", "Dark Chocolate"],
+      notes: ["Smoky", "Chocolate"],
     },
     {
       product: "cpp-press",
@@ -45,7 +45,7 @@ export async function seedProductFlavorNotes(prisma: PrismaClient) {
     },
     {
       product: "true-roast",
-      notes: ["Dark Chocolate", "Smoky"],
+      notes: ["Chocolate", "Smoky"],
     },
     {
       product: "false-start-decaf",
@@ -53,13 +53,12 @@ export async function seedProductFlavorNotes(prisma: PrismaClient) {
     },
     {
       product: "null-brew-exception",
-      notes: ["Smoky", "Ashy"],
+      notes: ["Smoky", "Cinnamon"],
     },
   ];
 
   for (const rel of relations) {
     const product = getProduct(rel.product);
-
     if (!product) continue;
 
     for (const noteName of rel.notes) {
