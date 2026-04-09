@@ -9,3 +9,6 @@ npx prisma init
 
 ### Installation du dotenv pour Prisma
 npm install --save-dev prisma dotenv
+
+### TSX
+npm install -D tsx

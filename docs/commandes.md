@@ -9,3 +9,8 @@ npx prisma migrate dev --name update
 
 ### Lancer l'application
 npm run dev
+
+
+---
+### Seeds
+npx prisma db seed
