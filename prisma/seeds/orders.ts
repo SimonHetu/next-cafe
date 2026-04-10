@@ -5,7 +5,7 @@ import { OrderStatus, PaymentStatus } from "../../app/generated/prisma/client";
 export async function seedOrders() {
 
   // Récupère les users et produits existants
-  const users = await prisma.
+  const users = await prisma.user.findMany();
   const products = await prisma.product.findMany();
 
   // Helper pour trouver user/product
