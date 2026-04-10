@@ -1,15 +1,20 @@
 import { PrismaClient } from "../../app/generated/prisma/client";
 
 export async function seedProductFlavorNotes(prisma: PrismaClient) {
+
+  // Charge tous les produits et FN
   const products = await prisma.product.findMany();
   const notes = await prisma.flavorNote.findMany();
 
+  // Trouve une note via son nom
   const getNote = (name: string) =>
     notes.find((n) => n.name === name);
 
+  // Trouve un produit via son slug
   const getProduct = (slug: string) =>
     products.find((p) => p.slug === slug);
 
+  // Définition des relations
   const relations = [
     {
       product: "python-press",
@@ -57,14 +62,18 @@ export async function seedProductFlavorNotes(prisma: PrismaClient) {
     },
   ];
 
+  // Parcourt chaque relation produit / notes
   for (const rel of relations) {
+    // Convertit le slug en objet produit
     const product = getProduct(rel.product);
     if (!product) continue;
 
+    // Parcourt les notes associées au produit
     for (const noteName of rel.notes) {
       const note = getNote(noteName);
       if (!note) continue;
 
+      // Crée la relation en DB
       await prisma.productFlavorNote.create({
         data: {
           productId: product.id,
