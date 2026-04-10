@@ -1,6 +1,6 @@
-import { PrismaClient } from "../../app/generated/prisma/client";
+import { prisma } from "@/app/lib/prisma";
 
-export async function seedAddresses(prisma: PrismaClient) {
+export async function seedAddresses() {
   // Récupèrer les users
   const users = await prisma.user.findMany();
 

@@ -1,10 +1,11 @@
-import { PrismaClient, OrderStatus, PaymentStatus } from "../../app/generated/prisma/client";
+import { prisma } from "@/app/lib/prisma";
+import { OrderStatus, PaymentStatus } from "../../app/generated/prisma/client";
 
 // Seed de commandes avec items et snapshot de livraison
-export async function seedOrders(prisma: PrismaClient) {
+export async function seedOrders() {
 
   // Récupère les users et produits existants
-  const users = await prisma.user.findMany();
+  const users = await prisma.
   const products = await prisma.product.findMany();
 
   // Helper pour trouver user/product

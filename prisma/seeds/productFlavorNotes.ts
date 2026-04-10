@@ -1,6 +1,6 @@
-import { PrismaClient } from "../../app/generated/prisma/client";
+import { prisma } from "@/app/lib/prisma";
 
-export async function seedProductFlavorNotes(prisma: PrismaClient) {
+export async function seedProductFlavorNotes() {
 
   // Charge tous les produits et FN
   const products = await prisma.product.findMany();

@@ -1,6 +1,6 @@
-import { PrismaClient } from "../../app/generated/prisma/client";
+import { prisma } from "@/app/lib/prisma";
 
-export async function seedFlavorNotes(prisma: PrismaClient) {
+export async function seedFlavorNotes() {
   await prisma.flavorNote.createMany({
     data: [
       "Chocolate",

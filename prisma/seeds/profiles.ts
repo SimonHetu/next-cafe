@@ -1,6 +1,6 @@
-import { PrismaClient } from "../../app/generated/prisma/client";
+import { prisma } from "@/app/lib/prisma";
 
-export async function seedProfiles(prisma: PrismaClient) {
+export async function seedProfiles() {
   const users = await prisma.user.findMany();
 
   for (const user of users) {
