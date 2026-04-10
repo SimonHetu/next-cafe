@@ -1,4 +1,4 @@
-import { prisma } from "@/app/lib/prisma";
+import prisma from "@/app/lib/prisma";
 import { RoastLevel } from "../../app/generated/prisma/client";
 
 export async function seedProducts() {

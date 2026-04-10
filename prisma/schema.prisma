@@ -66,7 +66,7 @@ model Product {
   description String
   imageUrl    String?
   price       Decimal   @db.Decimal(10, 2)
-  stockQuantity Int     @default(0)
+  stockQuantity Int     @default(0) 
   isActive    Boolean   @default(true)
   items       Item[]
   roastLevel  RoastLevel
@@ -102,13 +102,13 @@ model ProductFlavorNote {
 model Item {
   id          String      @id @default(cuid())
   orderId     String
-  productId   String?
+  productId   String
   productName String
   quantity    Int
   unitPrice   Decimal     @db.Decimal(10, 2)
 
   order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product     Product?    @relation(fields: [productId], references: [id])
+  product     Product    @relation(fields: [productId], references: [id])
 
   @@unique([orderId, productId])
 }

@@ -1,4 +1,4 @@
-import { prisma } from "@/app/lib/prisma";
+import prisma from "@/app/lib/prisma";
 import { OrderStatus, PaymentStatus } from "../../app/generated/prisma/client";
 
 // Seed de commandes avec items et snapshot de livraison

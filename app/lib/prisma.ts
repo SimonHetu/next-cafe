@@ -10,7 +10,8 @@ if (!connectionString) {
 }
 
 // Prisma setup
-const adapter = new PrismaNeon({ connectionString });
-export const prisma = new PrismaClient({ adapter });
+const adapter = new PrismaNeon({ connectionString, });
+const prisma = new PrismaClient({ adapter });
 
+export default prisma;
 
