@@ -1,6 +1,6 @@
 import { OrderStatus, PaymentStatus } from "../generated/prisma/client";
 import prisma from "./prisma";
-import { transactionUpdate } from "./transactions";
+import { transactionSequentiel, transactionUpdate } from "./transactions";
 
 
 export async function testOrders() {
@@ -93,11 +93,33 @@ async function testTransactions() {
     console.error("Erreur lors de la creation des commandes tests. Assurez-vous d'avoir seedé les données nécessaires avant de lancer les tests, avec la commande 'npx prisma db seed'. ");
     return;
   }
+
+  const goodShipment = [
+    { productId: "cmnt18l5w0004djsbf6t4g48p", amountReceived: 10 },
+    { productId: "cmnt18l5w0005djsbb2wepdip", amountReceived: 10 },
+    { productId: "cmnt18l5w000adjsb1srae48m", amountReceived: 10 },
+  ]
+
+  const badShipment = [
+    { productId: "cmnt18l5w0004djsbf6t4g48p", amountReceived: 10 },
+    { productId: "cmnt18l5w0005djsbb2wepdip", amountReceived: 10 },
+    { productId: "cmnt18l5djsb1srae48m", amountReceived: 10 }, // Doesnt exists
+  ]
+
+
   console.log("\n=== TEST 1 :  Commande reussi ===");
   await transactionUpdate(goodOrder.id);
 
   console.log("\n=== TEST 2 :  Commande rechouee (stock insufisant) ===");
   await transactionUpdate(badOrder.id);
+
+  console.log("\n=== TEST 3 :  Update séquentielle reussi ===");
+  await transactionSequentiel(goodShipment);
+
+  console.log("\n=== TEST 4 :  Update séquentielle échoué ===");
+  await transactionSequentiel(badShipment);
+
+
 
 }
 
