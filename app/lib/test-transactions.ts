@@ -1,5 +1,5 @@
 import { OrderStatus, PaymentStatus } from "../generated/prisma/client";
-import prisma  from "./prisma";
+import prisma from "./prisma";
 import { transactionUpdate } from "./transactions";
 
 
@@ -73,7 +73,7 @@ export async function testOrders() {
     ],
   });
 
-    const badOrder = await createOrder({
+  const badOrder = await createOrder({
     userEmail: "emilie.velours@example.com",
     status: OrderStatus.CART,
     items: [
@@ -93,11 +93,11 @@ async function testTransactions() {
     console.error("Erreur lors de la creation des commandes tests. Assurez-vous d'avoir seedé les données nécessaires avant de lancer les tests, avec la commande 'npx prisma db seed'. ");
     return;
   }
-    console.log("\n=== TEST 1 :  Commande reussi ===");
-    await transactionUpdate(goodOrder.id);
-        
-    console.log("\n=== TEST 2 :  Commande rechouee (stock insufisant) ===");
-    await transactionUpdate(badOrder.id);
+  console.log("\n=== TEST 1 :  Commande reussi ===");
+  await transactionUpdate(goodOrder.id);
+
+  console.log("\n=== TEST 2 :  Commande rechouee (stock insufisant) ===");
+  await transactionUpdate(badOrder.id);
 
 }
 
