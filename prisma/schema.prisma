@@ -60,20 +60,32 @@ model User {
 
 
 model Product {
+  id                String    @id @default(cuid())
+  name              String
+  slug              String    @unique
+  description       String
+  detailDescription String      
+  imageUrl          String
+  images            ProductImage[]
+  price             Decimal   @db.Decimal(10, 2)
+  stockQuantity     Int       @default(0) 
+  isActive          Boolean   @default(true)
+  items             Item[]
+  roastLevel        RoastLevel
+  origin            String // Table possible
+  flavorNotes       ProductFlavorNote[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model ProductImage {
   id          String    @id @default(cuid())
-  name        String
-  slug        String    @unique
-  description String
-  imageUrl    String?
-  price       Decimal   @db.Decimal(10, 2)
-  stockQuantity Int     @default(0) 
-  isActive    Boolean   @default(true)
-  items       Item[]
-  roastLevel  RoastLevel
-  origin      String? // Table possible
-  flavorNotes ProductFlavorNote[]
+  url         String
+  role        String?   // "list", "detail", "thumbnail", etc.
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 }
 
 //------------------------------------------------------------
