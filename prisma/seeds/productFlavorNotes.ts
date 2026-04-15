@@ -1,4 +1,4 @@
-import prisma from "@/app/lib/prisma";
+import prisma from "@/src/lib/prisma";
 
 export async function seedProductFlavorNotes() {
 
