@@ -29,7 +29,7 @@ export function FadeInWithScroll({
         scrollTrigger: {
           trigger: animationContainer.current,
           toggleActions: "play none none reverse",
-          end: "top 6%",
+          end: "top 60%",
           scrub: true,
         }
       }
