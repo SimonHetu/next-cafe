@@ -2,7 +2,24 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+```bash
+npm install
+```
+
+Configurez votre fichier .env à partir du .env.exemple
+
+Faites un compte Ngrok si ce n'est pas encore fait pour le configurer dans 'Getting Started' -> 'Setup & Installation' faites l'étape d'installation pour configurer votre auth token jusqu'à avoir votre l'adresse de votre domaine. Copier celui-ci.
+
+Retournez Clerk, sur le dashboard du projet, rendez-vous à la section 'Configure' -> 'Developers' -> 'Webhooks' . Faites 'add Endpoint' et dans la case Endpoint URL collez votre adresse obtenue de ngrok. et ajoutez ' /api/webhooks ' à la suite. Sélectionnez les events 3 events de user dans la boite 'Subscribe to events' puis créez votre endpoint.
+Sur la page de votre nouveau endpoint, vous trouverez le Signing Secret; ajoutez celui-ci à votre .env
+
+Vous pouvez maintenant démarrer ngrok sur le port que vous utilisez (ici 3000) :
+
+```bash
+ngrok http 3000
+```
+
+Puis démarrez le projet :
 
 ```bash
 npm run dev
