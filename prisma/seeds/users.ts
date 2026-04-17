@@ -1,5 +1,5 @@
 import  prisma  from "@/src/lib/prisma";
-import { UserRole } from "../../src/app/generated/prisma/enums";
+import { UserRole } from "../../src/generated/prisma/enums";
 
 export async function seedUsers() {
   await prisma.user.createMany({

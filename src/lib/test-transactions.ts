@@ -1,4 +1,4 @@
-import { OrderStatus, PaymentStatus } from "../app/generated/prisma/client";
+import { OrderStatus, PaymentStatus } from "../generated/prisma/client";
 import prisma from "./prisma";
 import { transactionSequentiel, transactionUpdate } from "./transactions";
 
