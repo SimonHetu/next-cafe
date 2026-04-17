@@ -1,0 +1,23 @@
+### Get all products
+GET http://localhost:3000/api/products
+
+### Get product by slug
+GET http://localhost:3000/api/products/go-brew
+
+### Create product
+POST http://localhost:3000/api/products
+Content-Type: application/json
+
+{
+    "name": "Blender Roast",
+    "slug": "blender-roast",
+    "description": "Smooth and balanced coffee",
+    "detailDescription": "Chocolate notes with nutty finish.",
+    "imageUrl": "/assets/images/products/blender.png",
+    "price": 19.99,
+    "stockQuantity": 25,
+    "isActive": true,
+    "roastLevel": "MEDIUM",
+    "origin": "Brazil",
+    "flavorNoteIds": []
+}

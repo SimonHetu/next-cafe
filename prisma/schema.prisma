@@ -39,12 +39,9 @@ enum PaymentStatus {
   REFUNDED
 }
 
-// enum role
-
 //============================================================
 // MODELS
 //============================================================
-
 model User {
   id        String    @id
   firstName String
@@ -57,23 +54,22 @@ model User {
   updatedAt DateTime  @updatedAt
 }
 
-
-
 model Product {
-  id          String    @id @default(cuid())
-  name        String
-  slug        String    @unique
-  description String
-  imageUrl    String?
-  price       Decimal   @db.Decimal(10, 2)
-  stockQuantity Int     @default(0) 
-  isActive    Boolean   @default(true)
-  items       Item[]
-  roastLevel  RoastLevel
-  origin      String? // Table possible
-  flavorNotes ProductFlavorNote[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  name              String
+  slug              String    @unique
+  description       String
+  detailDescription String      
+  imageUrl          String
+  price             Decimal   @db.Decimal(10, 2)
+  stockQuantity     Int       @default(0) 
+  isActive          Boolean   @default(true)
+  items             Item[]
+  roastLevel        RoastLevel
+  origin            String // Table possible
+  flavorNotes       ProductFlavorNote[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 //------------------------------------------------------------
