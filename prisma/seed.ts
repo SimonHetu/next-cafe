@@ -14,12 +14,12 @@ async function main() {
 
   // Supprime les données des tables (en ordre de dépendances pour éviter les erreurs FK )
   await prisma.item.deleteMany();
-  await prisma.productFlavorNote.deleteMany();
   await prisma.order.deleteMany();
   await prisma.address.deleteMany();
   await prisma.flavorNote.deleteMany();
   await prisma.product.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.productFlavorNote.deleteMany();
 
   // Execution des seeds en ordre pour les relations
   console.log("Seeding...");
@@ -28,8 +28,8 @@ async function main() {
   await seedAddresses();
   await seedProducts();
   await seedFlavorNotes();
-  await seedProductFlavorNotes();
   await seedOrders();
+  await seedProductFlavorNotes();
 
   console.log("Seeding done");
 }

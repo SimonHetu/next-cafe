@@ -3,10 +3,32 @@ import HashedTitle from "@/src/components/landing/hashed-title";
 import { FadeInWithScroll } from "@/src/components/ui/animations/fade-in-with-scroll";
 import { ProductCard } from "@/src/components/ui/product-card";
 import { Product } from "@/src/generated/prisma/client";
-import { getFakeProduct } from "@/src/lib/utils";
-export default function Home() {
+import { getProducts } from "@/src/lib/products/product.service";
 
-  const products: Product[] = getFakeProduct(3)
+export default async function Home() {
+  let products: Product[] = [];
+  let error: string | null = null;
+
+  try {
+    products = await getProducts("", "", "best-seller");
+  } catch (err) {
+    console.error("Failed to fetch products:", err);
+    error = "Failed to load products. Please try again later.";
+  }
+
+  // Limit to 3 products for the home page
+  const displayProducts = products.slice(0, 3);
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-error mb-4">Error</h2>
+          <p className="text-base-content/70">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -18,7 +40,7 @@ export default function Home() {
             <h1 className="text-4xl mb-10 italic font-bold">Our Best Sellers</h1>
           </FadeInWithScroll>
           <FadeInWithScroll className="grid grid-cols-1 mb-12 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
-            {products.map((p: Product) =>
+            {displayProducts.map((p: Product) => (
               <ProductCard
                 key={p.id}
                 id={p.id}
@@ -30,8 +52,8 @@ export default function Home() {
                 stockQuantity={p.stockQuantity}
                 origin={p.origin}
                 description={p.description}
-              />)
-            }
+              />
+            ))}
           </FadeInWithScroll>
         </div>
       </div>
