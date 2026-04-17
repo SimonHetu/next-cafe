@@ -1,5 +1,13 @@
 @import "tailwindcss";
- @plugin "daisyui" {
-   themes: retro --default, coffee;
+@plugin "daisyui" {
+   themes: black --default;
  }
+
+
+@font-face {
+  font-family: 'Coolvetica';
+  src: url('/fonts/coolvetica-bold.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
 
