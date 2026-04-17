@@ -1,4 +1,4 @@
-import  prisma  from "@/app/lib/prisma";
+import  prisma  from "@/lib/prisma";
 import { UserRole } from "../../app/generated/prisma/enums";
 
 export async function seedUsers() {
