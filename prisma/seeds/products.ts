@@ -1,5 +1,5 @@
-import prisma from "@/lib/prisma";
-import { RoastLevel } from "../../app/generated/prisma/client";
+import prisma from "@/src/lib/prisma";
+import { RoastLevel } from "../../src/app/generated/prisma/client";
 
 export async function seedProducts() {
   await prisma.product.createMany({

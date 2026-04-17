@@ -1,4 +1,4 @@
-import { CreateProductInput } from "@/lib/products/product.types";
+import { CreateProductInput } from "@/src/lib/products/product.types";
 
 export function validateCreateProductInput(data: CreateProductInput) {
     if (!data.name.trim()) throw new Error("Name is required");

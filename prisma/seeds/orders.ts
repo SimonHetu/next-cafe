@@ -1,5 +1,5 @@
-import prisma from "@/lib/prisma";
-import { OrderStatus, PaymentStatus } from "../../app/generated/prisma/client";
+import prisma from "@/src/lib/prisma";
+import { OrderStatus, PaymentStatus } from "../../src/app/generated/prisma/client";
 
 // Seed de commandes avec items et snapshot de livraison
 export async function seedOrders() {

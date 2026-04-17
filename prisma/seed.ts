@@ -1,5 +1,5 @@
 import "dotenv/config";
-import prisma from "../lib/prisma";
+import prisma from "../src/lib/prisma";
 
 import { seedUsers } from "./seeds/users";
 import { seedAddresses } from "./seeds/addresses";

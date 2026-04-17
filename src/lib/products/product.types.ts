@@ -1,4 +1,4 @@
-import { RoastLevel } from "@/app/generated/prisma/enums";
+import { RoastLevel } from "@/src/app/generated/prisma/enums";
 
 export type CreateProductInput = {
     name: string;

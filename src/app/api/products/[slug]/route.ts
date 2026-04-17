@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ProductService } from "@/lib/products/product.service";
+import { ProductService } from "@/src/lib/products/product.service";
 
 type Props = {
   params: Promise<{ slug: string }>;
