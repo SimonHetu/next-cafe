@@ -23,6 +23,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "seed": "tsx prisma/seed.ts",
     "tx": "npx tsx app/lib/test-transactions.ts"
   },
   "dependencies": {
