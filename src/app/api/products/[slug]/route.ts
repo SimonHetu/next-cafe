@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ProductService } from "@/src/lib/products/product.service";
+import { getProductBySlug } from "@/src/lib/products/product.service";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -9,7 +9,7 @@ export async function GET(_: Request, { params }: Props) {
   try {
     const { slug } = await params;
 
-    const product = await ProductService.getProductBySlug(slug);
+    const product = await getProductBySlug(slug);
 
     if (!product) {
       return NextResponse.json(

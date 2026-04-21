@@ -41,8 +41,6 @@ export default function ProductFilter({ origins }: { origins: string[] }) {
         scrollTrigger: {
           trigger: ".toggle-btn",
           toggleActions: "play none none reverse",
-          start: "top 8%",
-          scrub: true,
         }
       }
     )
