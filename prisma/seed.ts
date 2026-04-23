@@ -14,6 +14,8 @@ async function main() {
 
   // Supprime les données des tables (en ordre de dépendances pour éviter les erreurs FK )
   await prisma.item.deleteMany();
+  await prisma.cart.deleteMany();
+  await prisma.productFlavorNote.deleteMany();
   await prisma.order.deleteMany();
   await prisma.address.deleteMany();
   await prisma.flavorNote.deleteMany();

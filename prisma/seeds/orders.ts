@@ -31,6 +31,13 @@ export async function seedOrders() {
 
     let subtotal = 0;
 
+    // Création d'un panier pour l'utilisateur
+    const cart = await prisma.cart.create({
+      data: {
+        userId: user.id,
+      },
+    });
+
     // Création initiale
     const order = await prisma.order.create({
       data: {
@@ -55,6 +62,7 @@ export async function seedOrders() {
       await prisma.item.create({
         data: {
           orderId: order.id,
+          cartId: cart.id,
           productId: product.id,
           productName: product.name,
           quantity: item.quantity,
