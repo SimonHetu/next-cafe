@@ -76,8 +76,8 @@ export async function seedProductFlavorNotes() {
       // Crée la relation en DB
       await prisma.productFlavorNote.create({
         data: {
-          productId: product.id,
-          flavorNoteId: note.id,
+          product: { connect: { id: product.id } },
+          flavorNote: { connect: { id: note.id } },
         },
       });
     }

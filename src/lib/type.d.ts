@@ -1,6 +1,6 @@
 export type ActionState<T = null> = {
   success: boolean | null;
   message?: string;
-  error?: string;
+  error?: Error;
   data?: T;
 };
