@@ -21,6 +21,7 @@ async function main() {
   await prisma.flavorNote.deleteMany();
   await prisma.product.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.productFlavorNote.deleteMany();
 
   // Execution des seeds en ordre pour les relations
   console.log("Seeding...");
@@ -29,8 +30,8 @@ async function main() {
   await seedAddresses();
   await seedProducts();
   await seedFlavorNotes();
-  await seedProductFlavorNotes();
   await seedOrders();
+  await seedProductFlavorNotes();
 
   console.log("Seeding done");
 }

@@ -149,17 +149,17 @@ export default function ProductDetails3D({ id, name, description, price, roastLe
         {/* HTML Text Overlay Layer */}
         <div className="absolute inset-0 z-10 pointer-events-none flex flex-col justify-center max-w-7xl mx-auto px-8">
           <div ref={text1Ref} className="absolute top-1/3 right-10 max-w-md opacity-0">
-            <h1 className="text-5xl font-black mb-4">{name}</h1>
-            <p className="text-xl">{origin} • {roastLevel} Roast</p>
+            <h1 className="text-8xl font-black mb-4">{name}</h1>
+            <p className="text-3xl">{origin} • {roastLevel} Roast</p>
           </div>
-          <div ref={text2Ref} className="absolute top-1/2 left-10 max-w-md text-right opacity-0">
-            <div className="flex flex-row justify-between item-center">
+          <div ref={text2Ref} className="absolute top-1/2 left-10 max-w-md text-center opacity-0">
+            <div className="flex flex-row gap-4 justify-start item-center">
               {flavorNotes.map((note: FlavorNote) =>
-                <h2 key={note.id} className="text-3xl font-black mb-2 italic">{note.name}</h2>
+                <h2 key={note.id} className="text-6xl font-black mb-2 italic">{note.name}</h2>
               )}
             </div>
-            <p className="text-lg mb-2">{description}</p>
-            <div className="flex flex-row justify-between item-center">
+            <p className="text-xl mb-2">{description}</p>
+            <div className="flex flex-row justify-between item-center mt-5">
               <Button>Add to Cart</Button>
               <PriceTag price={price} />
             </div>

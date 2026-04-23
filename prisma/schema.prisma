@@ -83,13 +83,13 @@ model FlavorNote {
 }
 
 model ProductFlavorNote {
-  productId     String
+  productSlug   String
   flavorNoteId  String
 
-  product       Product       @relation(fields: [productId], references: [id])
+  product       Product       @relation(fields: [productSlug], references: [slug])
   flavorNote    FlavorNote    @relation(fields: [flavorNoteId], references: [id])
 
-  @@id([productId, flavorNoteId])
+  @@id([productSlug, flavorNoteId])
 }
 
 //------------------------------------------------------------
