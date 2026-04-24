@@ -53,6 +53,7 @@ export async function testOrders() {
       await prisma.item.create({
         data: {
           orderId: order.id,
+          cartId: "",
           productId: product.id,
           productName: product.name,
           quantity: item.quantity,

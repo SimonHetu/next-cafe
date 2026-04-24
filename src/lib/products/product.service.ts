@@ -2,8 +2,6 @@
 
 import { RoastLevel } from "@/src/app/generated/prisma/enums";
 import prisma from "@/src/lib/prisma";
-import { CreateProductInput } from "@/src/lib/products/product.types";
-import { validateCreateProductInput } from "@/src/lib/products/product.validation";
 
 
 

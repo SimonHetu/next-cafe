@@ -1,9 +1,26 @@
-import { Cart, Order } from "@/src/generated/prisma/client";
 import prisma from "../prisma";
-import { Prisma, OrderStatus, PaymentStatus } from "@/src/app/generated/prisma/browser";
-const ZERO = new Prisma.Decimal(0);
+import type { Product } from "@/src/generated/prisma/client";
+import type { Decimal } from "@prisma/client/runtime/client";
 
-export async function getOrCreateCart(userId: string): Promise<Cart> {
+export type CartItemWithProduct = {
+  id: string;
+  orderId: string | null;
+  cartId: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: Decimal;
+  product: Product;
+};
+
+export type CartWithItems = {
+  id: string;
+  userId: string | null;
+  items: CartItemWithProduct[];
+};
+
+export async function getOrCreateCart(userId: string): Promise<CartWithItems | null> {
+  if (!userId) return null;
   return prisma.cart.upsert({
     where: { userId: userId },
     update: {},
@@ -17,8 +34,7 @@ export async function getOrCreateCart(userId: string): Promise<Cart> {
         },
       },
     },
-  }
-  );
+  }) as Promise<CartWithItems>;
 }
 
 export async function addToCart(
@@ -27,6 +43,9 @@ export async function addToCart(
   quantityToAdd: number
 ) {
   const cart = await getOrCreateCart(userId);
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
   try {
     await prisma.$transaction(async (tx) => {
       const product = await tx.product.findUnique({ where: { id: productId } })
@@ -66,10 +85,27 @@ export async function removeCartItem(
   itemId: string
 ) {
   const cart = await getOrCreateCart(userId)
-  // Get cart for user
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
   await prisma.item.deleteMany({
     where: { AND: { cartId: cart.id, id: itemId } }
   })
+}
+
+export async function updateCartItemQuantity(
+  userId: string,
+  itemId: string,
+  quantity: number
+) {
+  const cart = await getOrCreateCart(userId);
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
+  await prisma.item.updateMany({
+    where: { AND: { cartId: cart.id, id: itemId } },
+    data: { quantity },
+  });
 }
 
 export async function clearCart(userId: string) {
@@ -82,5 +118,6 @@ export const CartService = {
   getOrCreateCart,
   addToCart,
   removeCartItem,
+  updateCartItemQuantity,
   clearCart,
 };

@@ -55,7 +55,7 @@ export function ProductHero() {
         {headings.map((text, lineIdx) => (
           <h1
             key={lineIdx}
-            className="line absolute text-center text-9xl mt-5 font-black drop-shadow-[5px_5px_rgba(0,0,0)] uppercase w-full"
+            className="line absolute text-center text-9xl mt-5 font-black drop-shadow-2xl uppercase w-full"
           >
             {text.split("").map((c, charIdx) => (
               <span key={charIdx} className="char inline-block whitespace-pre opacity-0">

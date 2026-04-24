@@ -4,15 +4,16 @@ import { FadeInWithScroll } from "@/src/components/ui/animations/fade-in-with-sc
 import { ProductCard } from "@/src/components/ui/product-card";
 import { Product } from "@/src/generated/prisma/client";
 import { getProducts } from "@/src/lib/products/product.service";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
   let products: Product[] = [];
   let error: string | null = null;
+  const user = await currentUser()
 
   try {
     products = await getProducts("", "", "best-seller");
   } catch (err) {
-    console.error("Failed to fetch products:", err);
     error = "Failed to load products. Please try again later.";
   }
 
@@ -39,7 +40,7 @@ export default async function Home() {
           <FadeInWithScroll>
             <h1 className="text-4xl mb-10 italic font-bold">Our Best Sellers</h1>
           </FadeInWithScroll>
-          <FadeInWithScroll className="grid grid-cols-1 mb-12 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+          <FadeInWithScroll className="grid grid-cols-1 mb-12 place-items-center gap-6 md:grid-cols-2 lg:grid-cols-3 mt-5 max-w-7xl mx-auto">
             {displayProducts.map((p: Product) => (
               <ProductCard
                 key={p.id}
@@ -47,11 +48,12 @@ export default async function Home() {
                 slug={p.slug}
                 name={p.name}
                 imageUrl={p.imageUrl ?? ""}
-                price={p.price}
+                price={p.price.toNumber()}
                 roastLevel={p.roastLevel}
                 stockQuantity={p.stockQuantity}
                 origin={p.origin}
                 description={p.description}
+                userId={user?.id}
               />
             ))}
           </FadeInWithScroll>

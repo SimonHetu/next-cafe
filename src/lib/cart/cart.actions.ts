@@ -8,120 +8,132 @@ import {
   RemoveCartItemSchema,
   ClearCartSchema,
 } from "@/src/lib/cart/cart.schema";
-import type { ActionState } from "@/src/lib/type";
+import { currentUser } from "@clerk/nextjs/server";
 
+export type CartActionState = { message: string } | null;
 
 export async function addToCartAction(
-  prevState: ActionState,
+  _prevState: CartActionState,
   formData: FormData
-): Promise<ActionState> {
+): Promise<CartActionState> {
+  const parsed = AddToCartSchema.safeParse({
+    userId: formData.get("userId"),
+    productId: formData.get("productId"),
+    quantity: formData.get("quantity"),
+  });
+
+  if (!parsed.success) {
+    return { message: "Invalid form data." };
+  }
+
   try {
-    const parsed = AddToCartSchema.safeParse({
-      userId: formData.get("userId"),
-      productId: formData.get("productId"),
-      quantity: formData.get("quantity"),
-    });
-
-    if (!parsed.success) {
-      const state: ActionState = {
-        success: false,
-        message: "Invalid form data.",
-        error: parsed.error,
-      };
-      return state
-    }
-
     const { userId, productId, quantity } = parsed.data;
-
     await CartService.addToCart(userId, productId, quantity);
-
     revalidatePath("/cart");
-
-    return {
-      success: true,
-      message: "Product added to cart.",
-    };
+    return null;
   } catch (error) {
-    const state: ActionState = {
-      success: false,
-      message: "Failed to add product to cart.",
-      error: error instanceof Error ? error : undefined,
+    return {
+      message:
+        error instanceof Error ? error.message : "Failed to add product to cart.",
     };
-    return state
   }
 }
 
 export async function removeCartItemAction(
-  prevState: ActionState,
+  _prevState: CartActionState,
   formData: FormData
-): Promise<ActionState> {
+): Promise<CartActionState> {
+  const parsed = RemoveCartItemSchema.safeParse({
+    userId: formData.get("userId"),
+    itemId: formData.get("itemId"),
+  });
+
+  if (!parsed.success) {
+    return {
+      message: parsed.error.issues[0]?.message ?? "Invalid form data.",
+    };
+  }
+
   try {
-    const parsed = RemoveCartItemSchema.safeParse({
-      userId: formData.get("userId"),
-      itemId: formData.get("itemId"),
-    });
-
-    if (!parsed.success) {
-      const state: ActionState = {
-        success: false,
-        message: parsed.error.issues[0]?.message ?? "Invalid form data.",
-        error: parsed.error
-      };
-      return state
-    }
-
     const { userId, itemId } = parsed.data;
-
     await CartService.removeCartItem(userId, itemId);
     revalidatePath("/cart");
-
-    return {
-      success: true,
-      message: "Cart item removed.",
-    };
+    return null;
   } catch (error) {
-    const state: ActionState = {
-      success: false,
-      message: "Failed to remove product.",
-      error: error instanceof Error ? error : undefined,
+    return {
+      message:
+        error instanceof Error ? error.message : "Failed to remove product.",
     };
-    return state
+  }
+}
+
+export async function updateCartItemQuantityAction(
+  _prevState: CartActionState,
+  formData: FormData
+): Promise<CartActionState> {
+  const parsed = UpdateCartItemQuantitySchema.safeParse({
+    userId: formData.get("userId"),
+    itemId: formData.get("itemId"),
+    quantity: formData.get("quantity"),
+  });
+
+  if (!parsed.success) {
+    return {
+      message: parsed.error.issues[0]?.message ?? "Invalid form data.",
+    };
+  }
+
+  try {
+    const { userId, itemId, quantity } = parsed.data;
+    await CartService.updateCartItemQuantity(userId, itemId, quantity);
+    revalidatePath("/cart");
+    return null;
+  } catch (error) {
+    return {
+      message:
+        error instanceof Error ? error.message : "Failed to update quantity.",
+    };
   }
 }
 
 export async function clearCartAction(
-  prevState: ActionState,
-  formData: FormData,
-): Promise<ActionState> {
+  _prevState: CartActionState,
+  formData: FormData
+): Promise<CartActionState> {
+  const parsed = ClearCartSchema.safeParse({
+    userId: formData.get("userId"),
+  });
+
+  if (!parsed.success) {
+    return {
+      message: parsed.error.issues[0]?.message ?? "Invalid form data.",
+    };
+  }
+
   try {
-    const parsed = ClearCartSchema.safeParse({
-      userId: formData.get("userId")
-    })
-
-    if (!parsed.success) {
-      const state: ActionState = {
-        success: false,
-        message: parsed.error.issues[0]?.message ?? "Invalid form data.",
-        error: parsed.error
-      };
-      return state
-    }
-
-
     await CartService.clearCart(parsed.data.userId);
     revalidatePath("/cart");
-
-    return {
-      success: true,
-      message: "Cart cleared.",
-    };
+    return null;
   } catch (error) {
-    const state: ActionState = {
-      success: false,
-      message: "Failed to clear cart.",
-      error: error instanceof Error ? error : undefined,
+    return {
+      message:
+        error instanceof Error ? error.message : "Failed to clear cart.",
     };
-    return state
+  }
+}
 
+export async function getCartCountAction(): Promise<number> {
+  try {
+    const clerkUser = await currentUser();
+    if (!clerkUser) return 0;
+    const cart = await CartService.getOrCreateCart(clerkUser.id);
+    return (
+      cart?.items.reduce(
+        (sum: number, item: { quantity: number }) => sum + item.quantity,
+        0
+      ) ?? 0
+    );
+  } catch {
+    return 0;
   }
 }

@@ -63,7 +63,7 @@ export default function ProductFilter({ origins }: { origins: string[] }) {
   return (
     <div
       ref={animationContainer}
-      className={`sticky z-50 top-0 left-0 transition-all duration-300 ${isMenuOpen
+      className={`sticky z-40 top-10 left-0 transition-all duration-300 ${isMenuOpen
         ? "bg-accent/90 p-10 shadow-xl ring-1 ring-info-content/15 backdrop-blur"
         : "p-4"
         }`}
