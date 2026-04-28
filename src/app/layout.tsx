@@ -16,15 +16,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-        className="h-full antialiased overflow-x-hidden"
+      className="h-full antialiased overflow-x-hidden"
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col font-mono">
         <ClerkProvider>
           <Header />
           {children}
           <footer />
         </ClerkProvider>
       </body>
-     </html>
-    )
-  }
+    </html>
+  )
+}

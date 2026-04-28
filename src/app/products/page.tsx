@@ -1,10 +1,10 @@
 import { ProductCard } from "@/src/components/ui/product-card"
 import { ProductHero } from "@/src/components/ui/animations/product-hero"
 import { Product } from "@/src/generated/prisma/client"
-import { getFakeProduct } from "@/src/lib/utils"
 import { FadeInWithScroll } from "@/src/components/ui/animations/fade-in-with-scroll"
 import ProductFilter from "@/src/components/ui/product-filter"
 import { getProducts } from "@/src/lib/products/product.service"
+import { currentUser } from "@clerk/nextjs/server"
 import { Coffee } from "lucide-react"
 
 interface PageProps {
@@ -16,6 +16,9 @@ export default async function ProductPage({ searchParams }: PageProps) {
   const orderBy = p.sort ?? 'best-sellers'
   const roastLevel = p.roast ?? ''
   const origin = p.origin ?? ''
+  const clerkUser = await currentUser()
+  const userId = clerkUser?.id
+  console.log(userId)
 
   let products: Product[] = []
   let error: string | null = null
@@ -56,7 +59,7 @@ export default async function ProductPage({ searchParams }: PageProps) {
             </div>
           </div>
         ) : (
-          <FadeInWithScroll className="grid grid-cols-1 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-3 mt-5">
+          <FadeInWithScroll className="grid grid-cols-1 place-items-center gap-6 md:grid-cols-2 lg:grid-cols-3 mt-5 px-4 md:px-6 max-w-7xl mx-auto">
             {products.map((p) =>
               <ProductCard
                 key={p.id}
@@ -64,11 +67,12 @@ export default async function ProductPage({ searchParams }: PageProps) {
                 slug={p.slug}
                 name={p.name}
                 imageUrl={p.imageUrl ?? ""}
-                price={p.price}
+                price={p.price.toNumber()}
                 roastLevel={p.roastLevel}
                 stockQuantity={p.stockQuantity}
                 origin={p.origin}
                 description={p.description}
+                userId={userId}
               />)
             }
           </FadeInWithScroll>

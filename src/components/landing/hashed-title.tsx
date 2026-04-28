@@ -31,7 +31,7 @@ export default function HashedTitle() {
         revealDelay: 1,
       },
       overwrite: "auto",
-      duration: 4
+      duration: 2
     });
 
     tl.fromTo(
@@ -59,7 +59,7 @@ export default function HashedTitle() {
       ref={containerRef}
       className="h-screen flex items-center justify-center flex-col"
     >
-      <h1 className="animated-heading text-center text-9xl font-black drop-shadow-[0_0_4px_rgba(255,255,255,0.8)] uppercase w-full italic">
+      <h1 className="animated-heading text-center text-9xl font-black uppercase w-full">
         Kernel Coffee
       </h1>
       <div className="animated-box">

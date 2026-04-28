@@ -1,16 +1,20 @@
 "use client";
 
-import React, { RefObject, Suspense, useRef } from 'react';
+import React, { RefObject, Suspense, useRef, useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useGLTF, Environment, ContactShadows } from '@react-three/drei';
 import { useGSAP } from '@gsap/react';
 import { Group } from 'three';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import gsap from 'gsap';
-import { useEffect } from 'react';
 import { PriceTag } from '../price-tag';
 import Button from './button';
-import { FlavorNote } from '@/app/generated/prisma/client';
+import { FlavorNote } from '@/src/generated/prisma/client';
+import { useUser } from '@clerk/nextjs';
+import { addToCartAction } from '@/src/lib/cart/cart.actions';
+import { ActionForm } from '@/src/components/ui/action-form';
+import { addToGuestCart } from '@/src/lib/cart/guest-cart';
+import { Check } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -80,13 +84,28 @@ interface ProductDetailProps {
   roastLevel: string;
   origin: string;
   flavorNotes: FlavorNote[];
+  userId?: string;
 }
 
-
-export default function ProductDetails3D({ id, name, description, price, roastLevel, origin, flavorNotes }: ProductDetailProps) {
+export default function ProductDetails3D({ id, name, description, price, roastLevel, origin, flavorNotes, userId }: ProductDetailProps) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const { isSignedIn } = useUser();
+  const isAuth = !!userId && isSignedIn;
+  const [guestAdded, setGuestAdded] = useState(false);
+
+  const handleGuestAdd = () => {
+    addToGuestCart({
+      productId: id,
+      productName: name,
+      quantity: 1,
+      unitPrice: price,
+    });
+    setGuestAdded(true);
+    setTimeout(() => setGuestAdded(false), 1500);
+  };
 
   // Refs for animations
   const containerRef = useRef<HTMLDivElement>(null);
@@ -160,9 +179,23 @@ export default function ProductDetails3D({ id, name, description, price, roastLe
             </div>
             <p className="text-xl mb-2">{description}</p>
             <div className="flex flex-row justify-between item-center mt-5">
-              <Button>Add to Cart</Button>
+              {isAuth ? (
+                <ActionForm action={addToCartAction} className="pointer-events-auto">
+                  <input type="hidden" name="userId" value={userId} />
+                  <input type="hidden" name="productId" value={id} />
+                  <input type="hidden" name="quantity" value="1" />
+                  <Button>
+                    {guestAdded ? <Check className="w-4 h-4" /> : "Add to Cart"}
+                  </Button>
+                </ActionForm>
+              ) : (
+                <button onClick={handleGuestAdd} className="pointer-events-auto toggle-btn mb-6 inline-flex items-center gap-2 border bg-accent/70 px-4 py-2 text-sm font-semibold uppercase tracking-wide shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-info-content hover:bg-info-content/10 hover:shadow-md">
+                  {guestAdded ? <Check className="w-4 h-4" /> : "Add to Cart"}
+                </button>
+              )}
               <PriceTag price={price} />
             </div>
+
           </div>
         </div>
         {/* 3D Canvas Layer */}

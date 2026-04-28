@@ -69,7 +69,7 @@ export default function Gallery() {
           <Image src="/landing-page/pattern-1.jpg" alt="" fill />
         </div>
         <div className={styles.galleryItem}>
-          <Image src="/landing-page/beans.jpg" alt="" fill />
+          <Image src="/landing-page/8_Coffee_beans_panoramic_background.png" alt="" fill />
         </div>
         <div className={styles.galleryItem}>
           <Image src="/landing-page/drip.jpg" alt="" fill />
@@ -78,16 +78,16 @@ export default function Gallery() {
           <Image src="/landing-page/pattern-2.jpg" alt="" fill />
         </div>
         <div className={styles.galleryItem}>
-          <Image src="/landing-page/sign.jpg" alt="" fill />
+          <Image src="/landing-page/4_Top_view_of_keyboard_and_coffee_on.png" alt="" fill />
         </div>
         <div className={styles.galleryItem}>
-          <Image src="/landing-page/keyboard.jpg" alt="" fill />
+          <Image src="/landing-page/6_Free_Vintage_Terminal_Glows_Image.png" alt="" fill />
         </div>
         <div className={styles.galleryItem}>
           <Image src="/landing-page/pattern-3.jpg" alt="" fill />
         </div>
         <div className={styles.galleryItem}>
-          <Image src="/landing-page/code.jpg" alt="" fill />
+          <Image src="/landing-page/7_Black_Coffee_Black_And_White_Dark.png" alt="" fill />
         </div>
       </div>
     </div>

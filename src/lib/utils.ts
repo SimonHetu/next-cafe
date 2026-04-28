@@ -26,6 +26,7 @@ export function getFakeProduct(n: number): Product[] {
       name,
       slug: `${slugify(name)}-${slugSuffix}`,
       description: faker.commerce.productDescription(),
+      detailDescription: faker.lorem.paragraphs(2),
       imageUrl: faker.image.url({ width: 640, height: 320 }),
       price: new Prisma.Decimal(priceValue),
       stockQuantity: faker.number.int({ min: 0, max: 100 }),

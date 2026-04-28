@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-   themes: retro --default;
+   themes: black --default;
  }
 
 
@@ -9,5 +9,10 @@
   src: url('/fonts/coolvetica-bold.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 

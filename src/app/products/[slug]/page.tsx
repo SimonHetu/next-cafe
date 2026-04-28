@@ -1,5 +1,6 @@
 import ProductDetails3D from "@/src/components/ui/animations/product-details-3d";
 import { getProductBySlug } from "@/src/lib/products/product.service";
+import { currentUser } from "@clerk/nextjs/server"
 import type { Product, FlavorNote } from "@/src/generated/prisma/client";
 
 // Extended product type with included flavor notes
@@ -13,6 +14,7 @@ export default async function ProductDetail({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params;
+  const user = await currentUser()
 
   let product: ProductWithFlavorNotes | null = null;
   let error: string | null = null;
@@ -59,6 +61,7 @@ export default async function ProductDetail({
         price={product.price.toNumber()}
         roastLevel={product.roastLevel}
         flavorNotes={flavorNotes}
+        userId={user?.id}
       />
     </div>
   );
