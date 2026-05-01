@@ -37,7 +37,7 @@ export default async function ProductDetail({
     );
   }
 
-  if (!product) {
+  if (!product || !product.isActive) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -59,6 +59,7 @@ export default async function ProductDetail({
         name={product.name}
         origin={product.origin ?? ""}
         price={product.price.toNumber()}
+        stockQuantity={product.stockQuantity}
         roastLevel={product.roastLevel}
         flavorNotes={flavorNotes}
         userId={user?.id}

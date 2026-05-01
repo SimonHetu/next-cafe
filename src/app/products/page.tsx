@@ -24,7 +24,7 @@ export default async function ProductPage({ searchParams }: PageProps) {
   let error: string | null = null
 
   try {
-    products = await getProducts(origin as string ?? '', roastLevel as string ?? '', orderBy as string ?? 'newest')
+    products = await getProducts(origin as string ?? '', roastLevel as string ?? '', orderBy as string ?? 'newest', true);
   } catch (err) {
     console.error('Failed to fetch products:', err)
     error = 'Failed to load products. Please try again later.'

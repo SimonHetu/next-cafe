@@ -1,4 +1,4 @@
-import { RoastLevel } from "@/src/app/generated/prisma/enums";
+import { RoastLevel } from "@/src/generated/prisma/enums";
 import { Coffee } from "lucide-react";
 
 interface Props {
