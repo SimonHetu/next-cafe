@@ -81,22 +81,25 @@ interface ProductDetailProps {
   name: string;
   description: string;
   price: number;
+  stockQuantity: number;
   roastLevel: string;
   origin: string;
   flavorNotes: FlavorNote[];
   userId?: string;
 }
 
-export default function ProductDetails3D({ id, name, description, price, roastLevel, origin, flavorNotes, userId }: ProductDetailProps) {
+export default function ProductDetails3D({ id, name, description, price, stockQuantity, roastLevel, origin, flavorNotes, userId }: ProductDetailProps) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   const { isSignedIn } = useUser();
   const isAuth = !!userId && isSignedIn;
+  const isOutOfStock = stockQuantity <= 0;
   const [guestAdded, setGuestAdded] = useState(false);
 
   const handleGuestAdd = () => {
+    if (isOutOfStock) return;
     addToGuestCart({
       productId: id,
       productName: name,
@@ -179,7 +182,9 @@ export default function ProductDetails3D({ id, name, description, price, roastLe
             </div>
             <p className="text-xl mb-2">{description}</p>
             <div className="flex flex-row justify-between item-center mt-5">
-              {isAuth ? (
+              {isOutOfStock ? (
+                <p className="pointer-events-auto text-error text-sm mt-2">Sold Out</p>
+              ) : isAuth ? (
                 <ActionForm action={addToCartAction} className="pointer-events-auto">
                   <input type="hidden" name="userId" value={userId} />
                   <input type="hidden" name="productId" value={id} />

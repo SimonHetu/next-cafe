@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { getCartCountAction } from "@/src/lib/cart/cart.actions";
 import { getGuestCartCount } from "@/src/lib/cart/guest-cart";
 import { usePathname } from "next/navigation";
+import { isAdmin } from "@/src/lib/admin/admin.service";
 
 function CartCount() {
   const { isSignedIn } = useUser();
@@ -49,9 +50,22 @@ function CartCount() {
 
 export function Header() {
   const pathname = usePathname();
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
 
   const promptUser = user?.firstName ?? user?.username ?? "guest";
+  const [isAdminUser, setIsAdminUser] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (user) {
+        const admin = await isAdmin(user.id);
+        setIsAdminUser(admin);
+      } else {
+        setIsAdminUser(false);
+      }
+    };
+    checkAdmin();
+  }, [user]);
 
   const navLink = (href: string, label: string) => {
     const active = pathname === href;
@@ -83,6 +97,7 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-4 shrink-0">
           {navLink("/", "cd ~")}
           {navLink("/products", "ls coffee")}
+          {isSignedIn && isAdminUser && navLink("/admin", "sudo ControlPanel")}
           <CartCount />
         </nav>
 

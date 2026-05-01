@@ -32,11 +32,15 @@ export function ProductCard({
   imageUrl,
   price,
   roastLevel,
+  stockQuantity,
+  origin,
   userId,
 }: ProductCardProps) {
   const [added, setAdded] = useState(false);
+  const isOutOfStock = stockQuantity <= 0;
 
   const handleGuestAdd = () => {
+    if (isOutOfStock) return;
     addToGuestCart({
       productId: id,
       productName: name,
@@ -69,10 +73,15 @@ export function ProductCard({
           <div className="mt-3">
             <RoastBadge roastLevel={roastLevel} />
           </div>
+          <div className="mt-2">
+            <span className="text-s text-base-content/70">• {origin}</span>
+          </div>
         </Link>
         <div className="flex justify-between items-end mt-5">
           <PriceTag price={price} />
-          {userId ? (
+          {isOutOfStock ? (
+            <p className="text-error text-xs font-semibold uppercase tracking-wide">Sold Out</p>
+          ) : userId ? (
             <ActionForm action={addToCartAction}>
               <input type="hidden" name="userId" value={userId} />
               <input type="hidden" name="productId" value={id} />
