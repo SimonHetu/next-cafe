@@ -20,6 +20,7 @@ export async function addToCartAction(
     userId: formData.get("userId"),
     productId: formData.get("productId"),
     quantity: formData.get("quantity"),
+    weightGrams: formData.get("weightGrams"),
   });
 
   if (!parsed.success) {
@@ -27,8 +28,8 @@ export async function addToCartAction(
   }
 
   try {
-    const { userId, productId, quantity } = parsed.data;
-    await CartService.addToCart(userId, productId, quantity);
+    const { userId, productId, quantity, weightGrams } = parsed.data;
+    await CartService.addToCart(userId, productId, quantity, weightGrams);
     revalidatePath("/cart");
     return null;
   } catch (error) {

@@ -10,6 +10,7 @@ export type CartItemWithProduct = {
   productName: string;
   quantity: number;
   unitPrice: Decimal;
+  weightGrams: number;
   product: Product;
 };
 
@@ -40,7 +41,8 @@ export async function getOrCreateCart(userId: string): Promise<CartWithItems | n
 export async function addToCart(
   userId: string,
   productId: string,
-  quantityToAdd: number
+  quantityToAdd: number,
+  weightGrams: number = 250
 ) {
   const cart = await getOrCreateCart(userId);
   if (!cart) {
@@ -70,7 +72,8 @@ export async function addToCart(
           productId: product.id,
           productName: product.name,
           quantity: quantityToAdd,
-          unitPrice: product.price
+          unitPrice: product.price,
+          weightGrams
         }
       })
     })

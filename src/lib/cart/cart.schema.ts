@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const PACKAGE_WEIGHTS = [250, 500, 1000] as const;
+
 export const AddToCartSchema = z.object({
   userId: z.string().trim().min(1, "User ID is required."),
   productId: z.string().trim().min(1, "Product ID is required."),
@@ -7,6 +9,15 @@ export const AddToCartSchema = z.object({
     .number()
     .int("Quantity must be a whole number.")
     .min(1, "Quantity must be at least 1.").optional().default(1),
+  weightGrams: z.coerce
+    .number()
+    .int("Weight must be a whole number.")
+    .refine(
+      (weight) => PACKAGE_WEIGHTS.includes(weight as typeof PACKAGE_WEIGHTS[number]),
+      "Invalid package weight."
+    )
+    .optional()
+    .default(250),
 });
 
 export const RemoveCartItemSchema = z.object({
