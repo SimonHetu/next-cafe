@@ -37,6 +37,7 @@ export function ProductCard({
   userId,
 }: ProductCardProps) {
   const [added, setAdded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const isOutOfStock = stockQuantity <= 0;
 
   const handleGuestAdd = () => {
@@ -55,13 +56,18 @@ export function ProductCard({
   return (
     <div className="w-full max-w-85 border border-base-content/10 bg-base-100 transition-all duration-500 hover:border-base-content/25 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1">
       <Link href={`/products/${slug}`} className="block group">
-        <div className="relative aspect-4/3 w-full p-6 overflow-hidden">
-          <Image
-            fill
-            src={imageUrl}
-            alt={`Product ${name} image`}
-            className="object-contain p-2 transition-transform duration-700 group-hover:scale-105"
-          />
+        <div className="relative aspect-4/3 w-full p-6 overflow-hidden bg-base-300">
+          {!imageError ? (
+            <Image
+              fill
+              src={imageUrl}
+              alt={`Product ${name} image`}
+              className="object-contain p-2 transition-transform duration-700 group-hover:scale-105"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-full h-full bg-base-300" />
+          )}
         </div>
       </Link>
       <div className="p-5">

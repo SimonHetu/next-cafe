@@ -1,9 +1,5 @@
-"use server"
-
 import { RoastLevel } from "@/src/generated/prisma/enums";
 import prisma from "@/src/lib/prisma";
-
-
 
 export async function getProducts(origin?: string, roast?: string, orderBy?: string, isActive?: boolean) {
   const orderByOptions: Record<string, Record<any, string>> = {
@@ -234,3 +230,11 @@ export async function deleteProduct(productId: string) {
 
   return deleted;
 }
+
+export const ProductService = {
+  createProduct,
+  deleteProduct,
+  updateProduct,
+  updateProductStock,
+  toggleProductActive,
+};

@@ -16,3 +16,16 @@
   50% { opacity: 0; }
 }
 
+/* skeleton utility for loading placeholders */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.skeleton {
+  background-color: rgba(148,163,184,0.12);
+  border-radius: 0.375rem;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
