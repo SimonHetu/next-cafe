@@ -66,7 +66,10 @@ export const createGuestCheckoutSession = async (items: GuestCartItem[]) => {
         line_items,
         success_url: `${process.env.APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.APP_URL}/cart`,
-        metadata: { cardId: "GUEST_CHECKOUT" }
+        metadata: { 
+            cardId: "GUEST_CHECKOUT",
+            items: JSON.stringify(items)
+         }
     });
 
     redirect(session.url!)
