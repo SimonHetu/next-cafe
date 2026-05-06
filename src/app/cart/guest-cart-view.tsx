@@ -13,7 +13,7 @@ import {
   type GuestCartItem,
 } from "@/src/lib/cart/guest-cart";
 import { CartItemCard } from "@/src/components/ui/cart-item-card";
-import { CheckoutButton } from "@/src/components/ui/checkout-button";
+import { GuestCheckoutButton } from "@/src/components/ui/guest-checkout-button";
 
 // Un peu d'auto magie ici. 
 // En gros à chaque fois que le signal to premier callback est lancer, 
@@ -105,7 +105,7 @@ export default function GuestCartView() {
           <p className="text-lg">
             Total: <span className="text-2xl font-bold">${total.toFixed(2)}</span>
           </p>
-          <CheckoutButton cart={items} /> 
+          <GuestCheckoutButton items={items} /> 
         </div>
       </div>
     </div>

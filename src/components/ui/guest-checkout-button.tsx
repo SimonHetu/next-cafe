@@ -1,15 +1,16 @@
 "use client"
 
-import { createAuthenticatedCheckoutSession } from "@/src/lib/stripe/checkout.action";
+import { GuestCartItem } from "@/src/lib/cart/guest-cart";
+import { createGuestCheckoutSession } from "@/src/lib/stripe/checkout.action";
 import { useTransition } from "react";
 
 type CheckoutButtonProps = {
-  cartId: string;     
+  items: GuestCartItem[];     
   disabled?: boolean;   
 };
 
-export function CheckoutButton({
-  cartId,
+export function GuestCheckoutButton({
+  items,
   disabled = false,
 }: CheckoutButtonProps) {
 
@@ -18,7 +19,7 @@ export function CheckoutButton({
   function handleClick() {
     startTransition(async () => {
       try {
-        await createAuthenticatedCheckoutSession(cartId);
+        await createGuestCheckoutSession(items);
       } catch (error) {
         console.error(error);
 
@@ -28,7 +29,7 @@ export function CheckoutButton({
           alert('Une erreur inconnue est survenue pendant le paiement.');
         }
       }
-    }); 
+    });
   }
 
   return (

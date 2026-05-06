@@ -124,7 +124,7 @@ export default async function CartPage() {
             Total:{" "}
             <span className="text-2xl font-bold">${total.toFixed(2)}</span>
           </p>
-          <CheckoutButton cart={cart!} />
+          <CheckoutButton cartId={cart?.id ?? ""} />
         </div>
       </div>
     </div>
