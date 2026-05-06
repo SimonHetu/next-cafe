@@ -11,6 +11,7 @@ import type { CartItemWithProduct } from "@/src/lib/cart/cart.service";
 import { CartItemCard } from "@/src/components/ui/cart-item-card";
 import { ActionForm } from "@/src/components/ui/action-form";
 import GuestCartView from "./guest-cart-view";
+import { CheckoutButton } from "@/src/components/ui/checkout-button";
 
 export default async function CartPage() {
   const user = await currentUser();
@@ -123,9 +124,7 @@ export default async function CartPage() {
             Total:{" "}
             <span className="text-2xl font-bold">${total.toFixed(2)}</span>
           </p>
-          <Link href="/products" className="btn btn-accent mt-4">
-            Continue Shopping
-          </Link>
+          <CheckoutButton cart={cart!} />
         </div>
       </div>
     </div>
