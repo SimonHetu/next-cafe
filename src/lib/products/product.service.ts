@@ -220,7 +220,7 @@ export async function deleteProduct(productId: string) {
 
   const deleted = await prisma.$transaction(async (tx) => {
     await tx.productFlavorNote.deleteMany({
-      where: { productSlug: product.slug },
+      where: { productId },
     });
 
     return tx.product.delete({

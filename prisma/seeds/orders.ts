@@ -1,7 +1,7 @@
 import prisma from "@/src/lib/prisma";
 import { OrderStatus, PaymentStatus } from "../../src/generated/prisma/client";
 
-// Seed de commandes avec items et snapshot de livraison
+// Seed de commandes avec items
 export async function seedOrders() {
 
   // Récupère les users et produits existants
@@ -15,7 +15,7 @@ export async function seedOrders() {
   const getProduct = (slug: string) =>
     products.find((p) => p.slug === slug);
 
-  // Création de commande
+  // Création d'une commande confirmée avec items
   async function createOrder({
     userEmail,
     status,
@@ -26,43 +26,23 @@ export async function seedOrders() {
     items: { slug: string; quantity: number }[];
   }) {
     const user = getUser(userEmail);
-
     if (!user) return;
 
-    let subtotal = 0;
-
-    // Création d'un panier pour l'utilisateur
-    const cart = await prisma.cart.create({
-      data: {
-        userId: user.id,
-      },
-    });
-
-    // Création initiale
     const order = await prisma.order.create({
       data: {
         userId: user.id,
         status,
-        // Paiement dépend du status
         paymentStatus: status === OrderStatus.CART ? PaymentStatus.UNPAID : PaymentStatus.PAID,
-        subtotal: 0,
-        shippingCost: 5,
-        total: 0,
       },
     });
 
-    // Ajout des items
     for (const item of items) {
       const product = getProduct(item.slug);
       if (!product) continue;
 
-      const lineTotal = Number(product.price) * item.quantity;
-      subtotal += lineTotal;
-
       await prisma.item.create({
         data: {
           orderId: order.id,
-          cartId: cart.id,
           productId: product.id,
           productName: product.name,
           quantity: item.quantity,
@@ -70,34 +50,12 @@ export async function seedOrders() {
         },
       });
     }
-
-    // Calcul du total final
-    const total = subtotal + 5;
-
-    // Mise à jour de la commande avec les totaux + snapshot shipping
-    await prisma.order.update({
-      where: { id: order.id },
-      data: {
-        subtotal,
-        total,
-        // Snapshot des infos de livraison si commande validée
-        ...(status !== OrderStatus.CART && {
-          shippingFirstName: user.firstName,
-          shippingLastName: user.lastName,
-          shippingLine1: "123 Rue du Café",
-          shippingCity: "Montréal",
-          shippingStateProvince: "QC",
-          shippingPostalCode: "H2X 1Y4",
-          shippingCountry: "Canada",
-        }),
-      },
-    });
   }
 
   // Création des commandes de test
   await createOrder({
     userEmail: "stephanie.cafeine@example.com",
-    status: OrderStatus.CART,
+    status: OrderStatus.DELIVERED,
     items: [
       { slug: "python-press", quantity: 1 },
       { slug: "boolean-brew", quantity: 2 },
