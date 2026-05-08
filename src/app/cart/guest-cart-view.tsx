@@ -14,6 +14,7 @@ import {
 } from "@/src/lib/cart/guest-cart";
 import { CartItemCard } from "@/src/components/ui/cart-item-card";
 import { GuestCheckoutButton } from "@/src/components/ui/guest-checkout-button";
+import { calculateTaxes } from "@/src/lib/tax";
 
 // Un peu d'auto magie ici. 
 // En gros à chaque fois que le signal to premier callback est lancer, 
@@ -49,7 +50,8 @@ export default function GuestCartView() {
     );
   }
 
-  const total = getGuestCartTotal();
+  const subtotal = getGuestCartTotal();
+  const { gst, qst, total } = calculateTaxes(subtotal);
 
   return (
     <div className="min-h-screen px-4 py-12 max-w-4xl mx-auto">
@@ -97,16 +99,28 @@ export default function GuestCartView() {
 
       <div className="divider" />
 
-      <div className="flex justify-between items-center">
+      <div className="space-y-1 text-right">
+        <p className="text-sm text-base-content/70">
+          Subtotal: <span className="font-medium">${subtotal.toFixed(2)}</span>
+        </p>
+        <p className="text-sm text-base-content/70">
+          GST (5%): <span className="font-medium">${gst.toFixed(2)}</span>
+        </p>
+        <p className="text-sm text-base-content/70">
+          QST (9.975%): <span className="font-medium">${qst.toFixed(2)}</span>
+        </p>
+        <p className="text-lg">
+          Total:{" "}
+          <span className="text-2xl font-bold">${total.toFixed(2)}</span>
+        </p>
+        <p className="text-xs text-base-content/50">Estimated taxes</p>
+      </div>
+
+      <div className="flex justify-between items-center mt-4">
         <button className="btn btn-outline btn-error" onClick={clearGuestCart}>
           Clear Cart
         </button>
-        <div className="text-right">
-          <p className="text-lg">
-            Total: <span className="text-2xl font-bold">${total.toFixed(2)}</span>
-          </p>
-          <GuestCheckoutButton items={items} /> 
-        </div>
+        <GuestCheckoutButton items={items} />
       </div>
     </div>
   );

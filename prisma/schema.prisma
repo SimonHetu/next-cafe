@@ -113,6 +113,7 @@ model Order {
   userId            String?
   status            OrderStatus   @default(PENDING)
   paymentStatus     PaymentStatus @default(UNPAID)
+  taxAmount         Decimal?      @db.Decimal(10, 2)
 
   user              User?     @relation(fields: [userId], references: [id])
   items             Item[]

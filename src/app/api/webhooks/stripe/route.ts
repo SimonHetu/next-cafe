@@ -92,10 +92,10 @@ async function handleAuthenticatedCheckout(
         userId: cart.userId,
         status: OrderStatus.CONFIRMED,
         paymentStatus: PaymentStatus.PAID,
+        taxAmount: (session.total_details?.amount_tax ?? 0) / 100,
       },
     });
 
-    // Move items from cart to order and decrement stock
     for (const item of cart.items) {
       // Update item to belong to order instead of cart
       await tx.item.update({
@@ -140,16 +140,15 @@ async function handleGuestCheckout(session: Stripe.Checkout.Session) {
   const items: GuestItem[] = JSON.parse(itemsJson);
 
   await prisma.$transaction(async (tx) => {
-    // Create order without user
     const order = await tx.order.create({
       data: {
         userId: null,
         status: OrderStatus.CONFIRMED,
         paymentStatus: PaymentStatus.PAID,
+        taxAmount: (session.total_details?.amount_tax ?? 0) / 100,
       },
     });
 
-    // Create items and decrement stock
     for (const item of items) {
       await tx.item.create({
         data: {
