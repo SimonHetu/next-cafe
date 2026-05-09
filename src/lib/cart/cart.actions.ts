@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import logger from "@/src/lib/logger";
 import { CartService } from "@/src/lib/cart/cart.service";
 import {
   AddToCartSchema,
@@ -32,6 +33,13 @@ export async function addToCartAction(
     revalidatePath("/cart");
     return null;
   } catch (error) {
+    logger.error("cart_action.add_to_cart_failed", {
+      action: "addToCartAction",
+      userId: parsed.data.userId,
+      productId: parsed.data.productId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       message:
         error instanceof Error ? error.message : "Failed to add product to cart.",
@@ -60,6 +68,13 @@ export async function removeCartItemAction(
     revalidatePath("/cart");
     return null;
   } catch (error) {
+    logger.error("cart_action.remove_item_failed", {
+      action: "removeCartItemAction",
+      userId: parsed.data.userId,
+      itemId: parsed.data.itemId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       message:
         error instanceof Error ? error.message : "Failed to remove product.",
@@ -89,6 +104,13 @@ export async function updateCartItemQuantityAction(
     revalidatePath("/cart");
     return null;
   } catch (error) {
+    logger.error("cart_action.update_quantity_failed", {
+      action: "updateCartItemQuantityAction",
+      userId: parsed.data.userId,
+      itemId: parsed.data.itemId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       message:
         error instanceof Error ? error.message : "Failed to update quantity.",
@@ -115,6 +137,12 @@ export async function clearCartAction(
     revalidatePath("/cart");
     return null;
   } catch (error) {
+    logger.error("cart_action.clear_failed", {
+      action: "clearCartAction",
+      userId: parsed.data.userId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       message:
         error instanceof Error ? error.message : "Failed to clear cart.",
@@ -133,7 +161,12 @@ export async function getCartCountAction(): Promise<number> {
         0
       ) ?? 0
     );
-  } catch {
+  } catch (error) {
+    logger.warn("cart_action.get_cart_count_failed", {
+      action: "getCartCountAction",
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return 0;
   }
 }

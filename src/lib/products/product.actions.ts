@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import logger from "@/src/lib/logger";
 import { ProductService } from "@/src/lib/products/product.service";
 import {
   CreateProductSchema,
@@ -43,6 +44,12 @@ export async function createProductAction(input: unknown) {
     revalidatePath("/products");
     return { success: true };
   } catch (error) {
+    logger.error("product_action.create_failed", {
+      action: "createProductAction",
+      slug: parsed.data.slug,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to create product",
@@ -89,6 +96,12 @@ export async function updateProductAction(productId: string, input: unknown) {
     revalidatePath(`/products/${updated.slug}`);
     return { success: true };
   } catch (error) {
+    logger.error("product_action.update_failed", {
+      action: "updateProductAction",
+      productId: parsed.data.productId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to update product",
@@ -109,6 +122,12 @@ export async function updateProductStockAction(productId: string, newStock: unkn
     revalidatePath("/admin");
     return { success: true };
   } catch (error) {
+    logger.error("product_action.update_stock_failed", {
+      action: "updateProductStockAction",
+      productId: parsed.data.productId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to update stock",
@@ -129,6 +148,12 @@ export async function toggleProductActiveAction(productId: string) {
     revalidatePath("/admin");
     return { success: true };
   } catch (error) {
+    logger.error("product_action.toggle_active_failed", {
+      action: "toggleProductActiveAction",
+      productId: parsed.data.productId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to toggle status",
@@ -152,6 +177,12 @@ export async function deleteProductAction(productId: string) {
     revalidatePath(`/products/${deleted.slug}`);
     return { success: true };
   } catch (error) {
+    logger.error("product_action.delete_failed", {
+      action: "deleteProductAction",
+      productId: parsed.data.productId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to delete product",

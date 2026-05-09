@@ -5,6 +5,7 @@ import {
   enforceApiRateLimit,
   getClientIp,
 } from "@/src/lib/api-rate-limit";
+import { edgeLog } from "@/src/lib/edge-log";
 
 const apiRatelimit = createApiRatelimitFromEnv();
 
@@ -29,6 +30,11 @@ const middleware = clerkMiddleware(async (auth, req) => {
     getClientIp(req)
   );
   if (!rate.continue) {
+    edgeLog("warn", {
+      reason: "api_rate_limit",
+      pathname: req.nextUrl.pathname,
+      ip: getClientIp(req),
+    });
     return rate.response;
   }
 

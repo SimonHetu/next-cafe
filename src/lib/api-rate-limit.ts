@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
+import { edgeLog } from "@/src/lib/edge-log";
+
 export const API_RATE_LIMIT_MAX = 60;
 
 export function shouldRateLimitApiPath(pathname: string): boolean {
@@ -55,8 +57,12 @@ export async function enforceApiRateLimit(
         ),
       };
     }
-  } catch {
-    // Upstash unreachable / bad credentials — fail open.
+  } catch (err) {
+    edgeLog("warn", {
+      reason: "api_rate_limit_backend_error",
+      pathname,
+      message: err instanceof Error ? err.message : String(err),
+    });
   }
 
   return { continue: true };
