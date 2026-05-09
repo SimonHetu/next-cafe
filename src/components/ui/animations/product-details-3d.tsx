@@ -18,8 +18,8 @@ import { Check } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-function Model({ containerRef }: { containerRef: RefObject<HTMLDivElement | null> }) {
-  const { scene } = useGLTF("/models/coffee-bag.glb");
+function Model({ containerRef, modelUrl }: { containerRef: RefObject<HTMLDivElement | null>; modelUrl: string }) {
+  const { scene } = useGLTF(modelUrl);
   const groupRef = useRef<Group>(null);
 
   useGSAP(() => {
@@ -80,6 +80,7 @@ interface ProductDetailProps {
   id: string;
   name: string;
   description: string;
+  modelUrl: string;
   price: number;
   stockQuantity: number;
   roastLevel: string;
@@ -88,7 +89,7 @@ interface ProductDetailProps {
   userId?: string;
 }
 
-export default function ProductDetails3D({ id, name, description, price, stockQuantity, roastLevel, origin, flavorNotes, userId }: ProductDetailProps) {
+export default function ProductDetails3D({ id, name, description, modelUrl, price, stockQuantity, roastLevel, origin, flavorNotes, userId }: ProductDetailProps) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -215,7 +216,7 @@ export default function ProductDetails3D({ id, name, description, price, stockQu
           <ambientLight intensity={0.5} />
           <Environment preset="studio" />
           <Suspense fallback={null}>
-            <Model containerRef={containerRef} />
+            <Model containerRef={containerRef} modelUrl={modelUrl} />
           </Suspense>
           <ContactShadows position={[0, -4.5, 0]} opacity={0.5} scale={20} blur={2} far={10} />
         </Canvas>
