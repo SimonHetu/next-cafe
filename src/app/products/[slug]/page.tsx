@@ -8,6 +8,16 @@ type ProductWithFlavorNotes = Product & {
   flavorNotes: { flavorNote: FlavorNote }[];
 };
 
+const productModelUrls: Record<string, string> = {
+  "boolean-brew": "/models/boolean-brew.glb",
+  "c-brew": "/models/c-brew.glb",
+  "csharp-shot": "/models/csharp-shot.glb",
+  "go-brew": "/models/go-brew.glb",
+  "null-brew-exception": "/models/null-brew-exception.glb",
+  "python-press": "/models/python-press.glb",
+  "ruby-roast": "/models/ruby-roast.glb",
+};
+
 export default async function ProductDetail({
   params
 }: {
@@ -56,6 +66,7 @@ export default async function ProductDetail({
       <ProductDetails3D
         id={product.id}
         description={product.detailDescription}
+        modelUrl={productModelUrls[product.slug] ?? "/models/coffee-bag.glb"}
         name={product.name}
         origin={product.origin ?? ""}
         price={product.price.toNumber()}
