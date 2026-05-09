@@ -5,7 +5,7 @@ import type { Decimal } from "@prisma/client/runtime/client";
 export type CartItemWithProduct = {
   id: string;
   orderId: string | null;
-  cartId: string;
+  cartId: string | null;
   productId: string;
   productName: string;
   quantity: number;

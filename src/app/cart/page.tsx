@@ -12,6 +12,7 @@ import { CartItemCard } from "@/src/components/ui/cart-item-card";
 import { ActionForm } from "@/src/components/ui/action-form";
 import GuestCartView from "./guest-cart-view";
 import { CheckoutButton } from "@/src/components/ui/checkout-button";
+import { calculateTaxes } from "@/src/lib/tax";
 
 export default async function CartPage() {
   const user = await currentUser();
@@ -42,11 +43,12 @@ export default async function CartPage() {
     );
   }
 
-  const total = items.reduce(
+  const subtotal = items.reduce(
     (sum: number, item: CartItemWithProduct) =>
       sum + item.unitPrice.toNumber() * item.quantity,
     0
   );
+  const { gst, qst, total } = calculateTaxes(subtotal);
 
   return (
     <div className="min-h-screen px-4 py-12 max-w-4xl mx-auto">
@@ -112,20 +114,31 @@ export default async function CartPage() {
 
       <div className="divider" />
 
-      <div className="flex justify-between items-center">
+      <div className="space-y-1 text-right">
+        <p className="text-sm text-base-content/70">
+          Subtotal: <span className="font-medium">${subtotal.toFixed(2)}</span>
+        </p>
+        <p className="text-sm text-base-content/70">
+          GST (5%): <span className="font-medium">${gst.toFixed(2)}</span>
+        </p>
+        <p className="text-sm text-base-content/70">
+          QST (9.975%): <span className="font-medium">${qst.toFixed(2)}</span>
+        </p>
+        <p className="text-lg">
+          Total:{" "}
+          <span className="text-2xl font-bold">${total.toFixed(2)}</span>
+        </p>
+        <p className="text-xs text-base-content/50">Estimated taxes</p>
+      </div>
+
+      <div className="flex justify-between items-center mt-4">
         <ActionForm action={clearCartAction}>
           <input type="hidden" name="userId" value={user.id} />
           <button type="submit" className="btn btn-outline btn-error">
             Clear Cart
           </button>
         </ActionForm>
-        <div className="text-right">
-          <p className="text-lg">
-            Total:{" "}
-            <span className="text-2xl font-bold">${total.toFixed(2)}</span>
-          </p>
-          <CheckoutButton cart={cart!} />
-        </div>
+        <CheckoutButton cartId={cart?.id ?? ""} />
       </div>
     </div>
   );

@@ -30,8 +30,6 @@ export async function testOrders() {
 
     if (!user) return null;
 
-    let subtotal = 0;
-
     // Création initiale
     const order = await prisma.order.create({
       data: {
@@ -39,9 +37,6 @@ export async function testOrders() {
         status,
         // Paiement dépend du status
         paymentStatus: status === OrderStatus.CART ? PaymentStatus.UNPAID : PaymentStatus.PAID,
-        subtotal: 0,
-        shippingCost: 5,
-        total: 0,
       },
     });
 
@@ -53,7 +48,6 @@ export async function testOrders() {
       await prisma.item.create({
         data: {
           orderId: order.id,
-          cartId: "",
           productId: product.id,
           productName: product.name,
           quantity: item.quantity,

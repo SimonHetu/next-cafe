@@ -2,7 +2,7 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { ReactNode, useRef } from "react"
+import { useRef } from "react"
 
 
 export function FadeInWithScroll({

@@ -2,7 +2,6 @@ import "dotenv/config";
 import prisma from "../src/lib/prisma";
 
 import { seedUsers } from "./seeds/users";
-import { seedAddresses } from "./seeds/addresses";
 import { seedProducts } from "./seeds/products";
 import { seedFlavorNotes } from "./seeds/flavorNotes";
 import { seedProductFlavorNotes } from "./seeds/productFlavorNotes";
@@ -17,17 +16,14 @@ async function main() {
   await prisma.cart.deleteMany();
   await prisma.productFlavorNote.deleteMany();
   await prisma.order.deleteMany();
-  await prisma.address.deleteMany();
   await prisma.flavorNote.deleteMany();
   await prisma.product.deleteMany();
   await prisma.user.deleteMany();
-  await prisma.productFlavorNote.deleteMany();
 
   // Execution des seeds en ordre pour les relations
   console.log("Seeding...");
 
   await seedUsers();
-  await seedAddresses();
   await seedProducts();
   await seedFlavorNotes();
   await seedOrders();
