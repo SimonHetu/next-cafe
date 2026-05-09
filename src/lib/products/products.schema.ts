@@ -1,5 +1,12 @@
 import { z } from "zod";
 import { RoastLevel } from "@/src/generated/prisma/enums";
+import {
+  LIMITS,
+  moneyAmountSchema,
+  productIdSchema,
+  productSlugSchema,
+  stockQuantitySchema,
+} from "@/src/lib/validation/limits";
 
 const imagePathRegex =
   /^(https?:\/\/.+\.(?:png|jpg|jpeg|gif|webp|svg|bmp))|(\/[a-zA-Z0-9._-]+)+\.(png|jpg|jpeg|gif|webp|svg|bmp)$/i;
@@ -8,6 +15,10 @@ export const imageSchema = z
   .string()
   .trim()
   .min(1, "Image URL is required.")
+  .max(
+    LIMITS.IMAGE_URL_MAX,
+    `Image URL must be at most ${LIMITS.IMAGE_URL_MAX} characters.`
+  )
   .refine((v) => imagePathRegex.test(v), {
     message: "Must be a valid image URL or local path.",
   })
@@ -31,36 +42,57 @@ export const imageSchema = z
   );
 
 export const CreateProductSchema = z.object({
-  name: z.string().trim().min(1, "Name is required."),
-  slug: z.string().trim().min(1, "Slug is required."),
-  description: z.string().trim().min(1, "Short description is required."),
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required.")
+    .max(
+      LIMITS.PRODUCT_NAME_MAX,
+      `Name must be at most ${LIMITS.PRODUCT_NAME_MAX} characters.`
+    ),
+  slug: productSlugSchema,
+  description: z
+    .string()
+    .trim()
+    .min(1, "Short description is required.")
+    .max(
+      LIMITS.PRODUCT_DESCRIPTION_MAX,
+      `Description must be at most ${LIMITS.PRODUCT_DESCRIPTION_MAX} characters.`
+    ),
   detailDescription: z
     .string()
     .trim()
-    .min(1, "Detailed description is required."),
+    .min(1, "Detailed description is required.")
+    .max(
+      LIMITS.PRODUCT_DETAIL_MAX,
+      `Detailed description must be at most ${LIMITS.PRODUCT_DETAIL_MAX} characters.`
+    ),
   imageUrl: imageSchema,
-  price: z.coerce.number().min(0, "Price cannot be negative."),
+  price: moneyAmountSchema,
   roastLevel: z.enum(RoastLevel),
-  origin: z.string().trim().min(1, "Origin is required."),
+  origin: z
+    .string()
+    .trim()
+    .min(1, "Origin is required.")
+    .max(
+      LIMITS.PRODUCT_ORIGIN_MAX,
+      `Origin must be at most ${LIMITS.PRODUCT_ORIGIN_MAX} characters.`
+    ),
 });
 
 export const UpdateProductSchema = CreateProductSchema.extend({
-  productId: z.string().trim().min(1, "Product ID is required."),
+  productId: productIdSchema,
 });
 
 export const UpdateProductStockSchema = z.object({
-  productId: z.string().trim().min(1, "Product ID is required."),
-  newStock: z.coerce
-    .number()
-    .int("Stock quantity must be a whole number.")
-    .min(0, "Stock quantity cannot be negative."),
+  productId: productIdSchema,
+  newStock: stockQuantitySchema,
 });
 
 export const ToggleProductActiveSchema = z.object({
-  productId: z.string().trim().min(1, "Product ID is required."),
+  productId: productIdSchema,
 });
 
 export const DeleteProductSchema = z.object({
-  productId: z.string().trim().min(1, "Product ID is required."),
+  productId: productIdSchema,
 });
-
