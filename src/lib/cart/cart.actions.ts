@@ -10,6 +10,7 @@ import {
   ClearCartSchema,
 } from "@/src/lib/cart/cart.schema";
 import { currentUser } from "@clerk/nextjs/server";
+import { toPublicErrorMessage } from "@/src/lib/public-error";
 
 export type CartActionState = { message: string } | null;
 
@@ -41,8 +42,10 @@ export async function addToCartAction(
       stack: error instanceof Error ? error.stack : undefined,
     });
     return {
-      message:
-        error instanceof Error ? error.message : "Failed to add product to cart.",
+      message: toPublicErrorMessage(
+        error,
+        "Failed to add product to cart."
+      ),
     };
   }
 }
@@ -76,8 +79,7 @@ export async function removeCartItemAction(
       stack: error instanceof Error ? error.stack : undefined,
     });
     return {
-      message:
-        error instanceof Error ? error.message : "Failed to remove product.",
+      message: toPublicErrorMessage(error, "Failed to remove product."),
     };
   }
 }
@@ -112,8 +114,7 @@ export async function updateCartItemQuantityAction(
       stack: error instanceof Error ? error.stack : undefined,
     });
     return {
-      message:
-        error instanceof Error ? error.message : "Failed to update quantity.",
+      message: toPublicErrorMessage(error, "Failed to update quantity."),
     };
   }
 }
@@ -144,8 +145,7 @@ export async function clearCartAction(
       stack: error instanceof Error ? error.stack : undefined,
     });
     return {
-      message:
-        error instanceof Error ? error.message : "Failed to clear cart.",
+      message: toPublicErrorMessage(error, "Failed to clear cart."),
     };
   }
 }

@@ -26,12 +26,7 @@ export async function GET(_: Request, { params }: Props) {
       stack: error instanceof Error ? error.stack : undefined,
     });
     return NextResponse.json(
-      {
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch product",
-      },
+      { message: "Failed to fetch product" },
       { status: 500 }
     );
   }

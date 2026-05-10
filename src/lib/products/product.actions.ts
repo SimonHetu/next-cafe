@@ -10,6 +10,7 @@ import {
   UpdateProductSchema,
   UpdateProductStockSchema,
 } from "@/src/lib/products/products.schema";
+import { toPublicErrorMessage } from "@/src/lib/public-error";
 
 export async function createProductAction(input: unknown) {
   const parsed = await CreateProductSchema.safeParseAsync(input);
@@ -52,7 +53,7 @@ export async function createProductAction(input: unknown) {
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to create product",
+      error: toPublicErrorMessage(error, "Failed to create product"),
     };
   }
 }
@@ -104,7 +105,7 @@ export async function updateProductAction(productId: string, input: unknown) {
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to update product",
+      error: toPublicErrorMessage(error, "Failed to update product"),
     };
   }
 }
@@ -130,7 +131,7 @@ export async function updateProductStockAction(productId: string, newStock: unkn
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to update stock",
+      error: toPublicErrorMessage(error, "Failed to update stock"),
     };
   }
 }
@@ -156,7 +157,7 @@ export async function toggleProductActiveAction(productId: string) {
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to toggle status",
+      error: toPublicErrorMessage(error, "Failed to toggle status"),
     };
   }
 }
@@ -185,7 +186,7 @@ export async function deleteProductAction(productId: string) {
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to delete product",
+      error: toPublicErrorMessage(error, "Failed to delete product"),
     };
   }
 }
