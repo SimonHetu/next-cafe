@@ -50,6 +50,12 @@ Copy `.env.example` to `.env` and fill:
 - Webhook endpoint: `src/app/api/webhooks/route.ts` syncs Clerk events (`user.created`, `user.updated`, `user.deleted`) to the local `User` table.
 - Layout wraps app in `<ClerkProvider>` + `<Header>`.
 
+## CSRF and mutations
+
+- **Server Actions** (`"use server"` in `src/lib/**`): Next.js compares `Origin` to `Host` (with proxy-aware headers) and blocks cross-origin Server Action requests (same-origin only here—no `allowedOrigins` override). You do not add manual CSRF tokens for actions invoked through the normal React/Next client protocol.
+- Prefer keeping **state-changing work** in Server Actions or in **webhooks verified with signing secrets** (Clerk, Stripe). Public GET API routes do not need CSRF tokens.
+- Reference: [Server Actions security](https://nextjs.org/docs/app/api-reference/config/next-config-js/serverActions).
+
 ## Product Domain
 
 - Service: `src/lib/products/product.service.ts` (server actions, `"use server"`). Provides `getProducts(origin, roast, orderBy)` and `getProductBySlug(slug)`.
