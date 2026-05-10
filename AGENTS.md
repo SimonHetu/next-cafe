@@ -13,7 +13,7 @@
 
 ## Environment
 
-Copy `.env.exemple` to `.env` and fill:
+Copy `.env.example` to `.env` and fill:
 
 - `DATABASE_URL` — PostgreSQL connection string (Neon)
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`

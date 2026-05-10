@@ -10,9 +10,21 @@ import {
   ClearCartSchema,
 } from "@/src/lib/cart/cart.schema";
 import { currentUser } from "@clerk/nextjs/server";
+import { upsertLocalUserFromClerk } from "@/src/lib/users/upsert-from-clerk";
 import { toPublicErrorMessage } from "@/src/lib/public-error";
 
 export type CartActionState = { message: string } | null;
+
+async function requireSyncedCartUser(formUserId: string): Promise<CartActionState> {
+  const clerkUser = await currentUser();
+  if (!clerkUser?.id || clerkUser.id !== formUserId) {
+    return {
+      message: "Could not verify your session. Please refresh the page and try again.",
+    };
+  }
+  await upsertLocalUserFromClerk(clerkUser);
+  return null;
+}
 
 export async function addToCartAction(
   _prevState: CartActionState,
@@ -30,6 +42,8 @@ export async function addToCartAction(
 
   try {
     const { userId, productId, quantity } = parsed.data;
+    const authGate = await requireSyncedCartUser(userId);
+    if (authGate) return authGate;
     await CartService.addToCart(userId, productId, quantity);
     revalidatePath("/cart");
     return null;
@@ -67,6 +81,8 @@ export async function removeCartItemAction(
 
   try {
     const { userId, itemId } = parsed.data;
+    const authGate = await requireSyncedCartUser(userId);
+    if (authGate) return authGate;
     await CartService.removeCartItem(userId, itemId);
     revalidatePath("/cart");
     return null;
@@ -102,6 +118,8 @@ export async function updateCartItemQuantityAction(
 
   try {
     const { userId, itemId, quantity } = parsed.data;
+    const authGate = await requireSyncedCartUser(userId);
+    if (authGate) return authGate;
     await CartService.updateCartItemQuantity(userId, itemId, quantity);
     revalidatePath("/cart");
     return null;
@@ -134,7 +152,10 @@ export async function clearCartAction(
   }
 
   try {
-    await CartService.clearCart(parsed.data.userId);
+    const { userId } = parsed.data;
+    const authGate = await requireSyncedCartUser(userId);
+    if (authGate) return authGate;
+    await CartService.clearCart(userId);
     revalidatePath("/cart");
     return null;
   } catch (error) {
@@ -154,6 +175,7 @@ export async function getCartCountAction(): Promise<number> {
   try {
     const clerkUser = await currentUser();
     if (!clerkUser) return 0;
+    await upsertLocalUserFromClerk(clerkUser);
     const cart = await CartService.getOrCreateCart(clerkUser.id);
     return (
       cart?.items.reduce(
