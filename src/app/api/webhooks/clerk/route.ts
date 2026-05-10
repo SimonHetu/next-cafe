@@ -2,6 +2,7 @@ import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest } from "next/server";
 import prisma from "@/src/lib/prisma";
 import logger from "@/src/lib/logger";
+import { plainTextResponse } from "@/src/lib/plain-text-response";
 
 export async function POST(req: NextRequest) {
   try {
@@ -53,12 +54,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return new Response("Webhook processed", { status: 200 });
+    return plainTextResponse("Webhook processed", 200);
   } catch (err) {
     logger.error("clerk_webhook.verification_failed", {
       message: err instanceof Error ? err.message : String(err),
       stack: err instanceof Error ? err.stack : undefined,
     });
-    return new Response("Invalid webhook", { status: 400 });
+    return plainTextResponse("Invalid webhook", 400);
   }
 }
