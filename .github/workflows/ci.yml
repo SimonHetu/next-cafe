@@ -40,4 +40,4 @@ jobs:
         run: echo "$HOME/.opengrep/cli/latest" >> "$GITHUB_PATH"
 
       - name: Run OpenGrep CI
-        run: opengrep ci
+        run: opengrep scan .
