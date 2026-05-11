@@ -8,7 +8,7 @@ import { currentUser } from "@clerk/nextjs/server"
 import { Coffee } from "lucide-react"
 
 interface PageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function ProductPage({ searchParams }: PageProps) {
