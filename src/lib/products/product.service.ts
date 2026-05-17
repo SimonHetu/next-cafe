@@ -19,10 +19,10 @@ export async function getProducts(origin?: string, roast?: string, orderBy?: str
     medium: RoastLevel.MEDIUM,
     dark: RoastLevel.DARK,
   };
-  const roastLevel = roast ? roastMap[roast.toLowerCase()] : null;
+  const roastLevel = roast ? roastMap[roast.toLowerCase()] : undefined;
   const where: Prisma.ProductWhereInput = {};
   if (origin) where.origin = origin;
-  if (roast) where.roastLevel = roastLevel;
+  if (roastLevel) where.roastLevel = roastLevel;
   if (isActive !== undefined) where.isActive = isActive;
 
   return prisma.product.findMany({
