@@ -39,7 +39,7 @@ describe("CreateProductSchema", () => {
         Promise.resolve({
           ok: true,
           headers: { get: () => "image/png" },
-        } as Response)
+        } as unknown as Response)
       )
     );
   });
@@ -80,7 +80,7 @@ describe("CreateProductSchema with remote imageUrl", () => {
         Promise.resolve({
           ok: true,
           headers: { get: () => "image/jpeg" },
-        } as Response)
+        } as unknown as Response)
       )
     );
   });
@@ -103,7 +103,7 @@ describe("UpdateProductSchema", () => {
         Promise.resolve({
           ok: true,
           headers: { get: () => "image/png" },
-        } as Response)
+        } as unknown as Response)
       )
     );
   });
