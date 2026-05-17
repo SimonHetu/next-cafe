@@ -97,6 +97,7 @@ export function Header() {
         <nav className="hidden md:flex items-center gap-4 shrink-0">
           {navLink("/", "cd ~")}
           {navLink("/products", "ls coffee")}
+          {isSignedIn && navLink("/profile", "whoami")}
           {isSignedIn && isAdminUser && navLink("/admin", "sudo control panel")}
           <CartCount />
         </nav>

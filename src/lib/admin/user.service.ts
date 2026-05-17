@@ -3,6 +3,7 @@
 import prisma from "@/src/lib/prisma";
 import { clerkClient } from "@clerk/nextjs/server";
 import { UserRole } from "@/src/generated/prisma/enums";
+import logger from "@/src/lib/logger";
 
 export async function getUsers() {
   try {
@@ -30,7 +31,10 @@ export async function getUsers() {
 
     return users;
   } catch (error) {
-    console.error("Error fetching users:", error);
+    logger.error("admin_user_service.get_users_failed", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }
@@ -43,7 +47,12 @@ export async function updateUserRole(userId: string, role: UserRole) {
     });
     return user;
   } catch (error) {
-    console.error("Error updating user role:", error);
+    logger.error("admin_user_service.update_role_failed", {
+      userId,
+      role,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }
@@ -65,7 +74,11 @@ export async function deleteUser(userId: string) {
 
     return { success: true };
   } catch (error) {
-    console.error("Error deleting user:", error);
+    logger.error("admin_user_service.delete_user_failed", {
+      userId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }

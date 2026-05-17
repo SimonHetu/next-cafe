@@ -2,6 +2,7 @@
 
 import prisma from "@/src/lib/prisma";
 import { OrderStatus, PaymentStatus } from "@/src/generated/prisma/enums";
+import logger from "@/src/lib/logger";
 
 interface FormattedOrder {
   id: string;
@@ -62,7 +63,10 @@ export async function getOrders(): Promise<FormattedOrder[]> {
       createdAt: order.createdAt,
     }));
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    logger.error("admin_order_service.get_orders_failed", {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }
@@ -75,7 +79,12 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus) {
     });
     return order;
   } catch (error) {
-    console.error("Error updating order status:", error);
+    logger.error("admin_order_service.update_status_failed", {
+      orderId,
+      status,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }
@@ -91,7 +100,12 @@ export async function updatePaymentStatus(
     });
     return order;
   } catch (error) {
-    console.error("Error updating payment status:", error);
+    logger.error("admin_order_service.update_payment_status_failed", {
+      orderId,
+      paymentStatus,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }
@@ -103,7 +117,11 @@ export async function deleteOrder(orderId: string) {
     });
     return { success: true };
   } catch (error) {
-    console.error("Error deleting order:", error);
+    logger.error("admin_order_service.delete_order_failed", {
+      orderId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 }
