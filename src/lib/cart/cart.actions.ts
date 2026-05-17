@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import logger from "@/src/lib/logger";
 import { CartService } from "@/src/lib/cart/cart.service";
 import {
   AddToCartSchema,
@@ -9,8 +10,21 @@ import {
   ClearCartSchema,
 } from "@/src/lib/cart/cart.schema";
 import { currentUser } from "@clerk/nextjs/server";
+import { upsertLocalUserFromClerk } from "@/src/lib/users/upsert-from-clerk";
+import { toPublicErrorMessage } from "@/src/lib/public-error";
 
 export type CartActionState = { message: string } | null;
+
+async function requireSyncedCartUser(formUserId: string): Promise<CartActionState> {
+  const clerkUser = await currentUser();
+  if (!clerkUser?.id || clerkUser.id !== formUserId) {
+    return {
+      message: "Could not verify your session. Please refresh the page and try again.",
+    };
+  }
+  await upsertLocalUserFromClerk(clerkUser);
+  return null;
+}
 
 export async function addToCartAction(
   _prevState: CartActionState,
@@ -28,13 +42,24 @@ export async function addToCartAction(
 
   try {
     const { userId, productId, quantity } = parsed.data;
+    const authGate = await requireSyncedCartUser(userId);
+    if (authGate) return authGate;
     await CartService.addToCart(userId, productId, quantity);
     revalidatePath("/cart");
     return null;
   } catch (error) {
+    logger.error("cart_action.add_to_cart_failed", {
+      action: "addToCartAction",
+      userId: parsed.data.userId,
+      productId: parsed.data.productId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
-      message:
-        error instanceof Error ? error.message : "Failed to add product to cart.",
+      message: toPublicErrorMessage(
+        error,
+        "Failed to add product to cart."
+      ),
     };
   }
 }
@@ -56,13 +81,21 @@ export async function removeCartItemAction(
 
   try {
     const { userId, itemId } = parsed.data;
+    const authGate = await requireSyncedCartUser(userId);
+    if (authGate) return authGate;
     await CartService.removeCartItem(userId, itemId);
     revalidatePath("/cart");
     return null;
   } catch (error) {
+    logger.error("cart_action.remove_item_failed", {
+      action: "removeCartItemAction",
+      userId: parsed.data.userId,
+      itemId: parsed.data.itemId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
-      message:
-        error instanceof Error ? error.message : "Failed to remove product.",
+      message: toPublicErrorMessage(error, "Failed to remove product."),
     };
   }
 }
@@ -85,13 +118,21 @@ export async function updateCartItemQuantityAction(
 
   try {
     const { userId, itemId, quantity } = parsed.data;
+    const authGate = await requireSyncedCartUser(userId);
+    if (authGate) return authGate;
     await CartService.updateCartItemQuantity(userId, itemId, quantity);
     revalidatePath("/cart");
     return null;
   } catch (error) {
+    logger.error("cart_action.update_quantity_failed", {
+      action: "updateCartItemQuantityAction",
+      userId: parsed.data.userId,
+      itemId: parsed.data.itemId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
-      message:
-        error instanceof Error ? error.message : "Failed to update quantity.",
+      message: toPublicErrorMessage(error, "Failed to update quantity."),
     };
   }
 }
@@ -111,13 +152,21 @@ export async function clearCartAction(
   }
 
   try {
-    await CartService.clearCart(parsed.data.userId);
+    const { userId } = parsed.data;
+    const authGate = await requireSyncedCartUser(userId);
+    if (authGate) return authGate;
+    await CartService.clearCart(userId);
     revalidatePath("/cart");
     return null;
   } catch (error) {
+    logger.error("cart_action.clear_failed", {
+      action: "clearCartAction",
+      userId: parsed.data.userId,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return {
-      message:
-        error instanceof Error ? error.message : "Failed to clear cart.",
+      message: toPublicErrorMessage(error, "Failed to clear cart."),
     };
   }
 }
@@ -126,6 +175,7 @@ export async function getCartCountAction(): Promise<number> {
   try {
     const clerkUser = await currentUser();
     if (!clerkUser) return 0;
+    await upsertLocalUserFromClerk(clerkUser);
     const cart = await CartService.getOrCreateCart(clerkUser.id);
     return (
       cart?.items.reduce(
@@ -133,7 +183,12 @@ export async function getCartCountAction(): Promise<number> {
         0
       ) ?? 0
     );
-  } catch {
+  } catch (error) {
+    logger.warn("cart_action.get_cart_count_failed", {
+      action: "getCartCountAction",
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return 0;
   }
 }

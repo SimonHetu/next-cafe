@@ -1,5 +1,4 @@
 import Stripe from "stripe";
-import { GST_RATE, QST_RATE } from "../tax";
 
 interface TaxRateDef {
   displayName: string;

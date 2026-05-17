@@ -6,7 +6,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 npm install
 ```
 
-Configurez votre fichier .env à partir du .env.exemple
+Configurez votre fichier .env à partir du .env.example
 
 Faites un compte Ngrok si ce n'est pas encore fait pour le configurer dans 'Getting Started' -> 'Setup & Installation' faites l'étape d'installation pour configurer votre auth token jusqu'à avoir votre l'adresse de votre domaine. Copier celui-ci.
 

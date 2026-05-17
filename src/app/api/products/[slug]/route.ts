@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { apiErrorLog } from "@/src/lib/logger";
 import { getProductBySlug } from "@/src/lib/products/product.service";
 
 type Props = {
@@ -6,9 +7,8 @@ type Props = {
 };
 
 export async function GET(_: Request, { params }: Props) {
+  const { slug } = await params;
   try {
-    const { slug } = await params;
-
     const product = await getProductBySlug(slug);
 
     if (!product) {
@@ -20,13 +20,13 @@ export async function GET(_: Request, { params }: Props) {
 
     return NextResponse.json(product);
   } catch (error) {
+    apiErrorLog("GET /api/products/[slug]", {
+      slug,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     return NextResponse.json(
-      {
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to fetch product",
-      },
+      { message: "Failed to fetch product" },
       { status: 500 }
     );
   }

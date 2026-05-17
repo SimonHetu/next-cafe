@@ -1,16 +1,18 @@
+import type { Prisma } from "@/src/generated/prisma/client";
 import { RoastLevel } from "@/src/generated/prisma/enums";
 import prisma from "@/src/lib/prisma";
 
 export async function getProducts(origin?: string, roast?: string, orderBy?: string, isActive?: boolean) {
-  const orderByOptions: Record<string, Record<any, string>> = {
+  const orderByOptions: Record<string, Prisma.ProductOrderByWithRelationInput> = {
     "a-z": { name: "asc" },
     "price-asc": { price: "asc" },
     "price-desc": { price: "desc" },
     "best-seller": { createdAt: "asc" },
     "newest": { createdAt: "desc" },
-  }
-  if (!orderBy || !orderByOptions[orderBy]) {
-    orderBy = "a-z";
+  };
+  let sortKey = orderBy ?? "a-z";
+  if (!orderByOptions[sortKey]) {
+    sortKey = "a-z";
   }
   const roastMap: Record<string, RoastLevel> = {
     light: RoastLevel.LIGHT,
@@ -18,7 +20,7 @@ export async function getProducts(origin?: string, roast?: string, orderBy?: str
     dark: RoastLevel.DARK,
   };
   const roastLevel = roast ? roastMap[roast.toLowerCase()] : null;
-  const where: Record<any, any> = {}
+  const where: Prisma.ProductWhereInput = {};
   if (origin) where.origin = origin;
   if (roast) where.roastLevel = roastLevel;
   if (isActive !== undefined) where.isActive = isActive;
@@ -33,7 +35,7 @@ export async function getProducts(origin?: string, roast?: string, orderBy?: str
     },
 
     where: where,
-    orderBy: orderByOptions[orderBy],
+    orderBy: orderByOptions[sortKey],
   });
 }
 

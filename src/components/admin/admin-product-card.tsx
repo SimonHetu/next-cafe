@@ -31,7 +31,6 @@ export function AdminProductCard({
   name,
   slug,
   description,
-  detailDescription,
   imageUrl,
   price,
   roastLevel,
