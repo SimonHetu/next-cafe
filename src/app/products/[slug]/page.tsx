@@ -1,5 +1,6 @@
 import ProductDetails3D from "@/src/components/ui/animations/product-details-3d";
 import { getProductBySlug } from "@/src/lib/products/product.service";
+import logger from "@/src/lib/logger";
 import { currentUser } from "@clerk/nextjs/server"
 import type { Product, FlavorNote } from "@/src/generated/prisma/client";
 
@@ -32,7 +33,11 @@ export default async function ProductDetail({
   try {
     product = await getProductBySlug(slug) as ProductWithFlavorNotes | null;
   } catch (err) {
-    console.error('Failed to fetch product:', err);
+    logger.error('page.product_detail.fetch_failed', {
+      slug,
+      message: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+    });
     error = 'Failed to load product details. Please try again later.';
   }
 

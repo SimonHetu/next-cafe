@@ -4,6 +4,7 @@ import { Product } from "@/src/generated/prisma/client"
 import { FadeInWithScroll } from "@/src/components/ui/animations/fade-in-with-scroll"
 import ProductFilter from "@/src/components/ui/product-filter"
 import { getProducts } from "@/src/lib/products/product.service"
+import logger from "@/src/lib/logger"
 import { currentUser } from "@clerk/nextjs/server"
 import { Coffee } from "lucide-react"
 
@@ -16,9 +17,8 @@ export default async function ProductPage({ searchParams }: PageProps) {
   const orderBy = p.sort ?? 'best-sellers'
   const roastLevel = p.roast ?? ''
   const origin = p.origin ?? ''
-  const clerkUser = await currentUser()
-  const userId = clerkUser?.id
-  console.log(userId)
+  const clerkUser = await currentUser();
+  const userId = clerkUser?.id;
 
   let products: Product[] = []
   let error: string | null = null
@@ -26,7 +26,13 @@ export default async function ProductPage({ searchParams }: PageProps) {
   try {
     products = await getProducts(origin as string ?? '', roastLevel as string ?? '', orderBy as string ?? 'newest', true);
   } catch (err) {
-    console.error('Failed to fetch products:', err)
+    logger.error("page.products.fetch_failed", {
+      origin,
+      roastLevel,
+      orderBy,
+      message: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+    });
     error = 'Failed to load products. Please try again later.'
   }
 

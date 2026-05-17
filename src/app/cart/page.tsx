@@ -13,6 +13,7 @@ import { ActionForm } from "@/src/components/ui/action-form";
 import GuestCartView from "./guest-cart-view";
 import { CheckoutButton } from "@/src/components/ui/checkout-button";
 import { calculateTaxes } from "@/src/lib/tax";
+import { upsertLocalUserFromClerk } from "@/src/lib/users/upsert-from-clerk";
 
 export default async function CartPage() {
   const user = await currentUser();
@@ -21,6 +22,7 @@ export default async function CartPage() {
     return <GuestCartView />;
   }
 
+  await upsertLocalUserFromClerk(user);
   const cart = await getOrCreateCart(user.id);
   const items: CartItemWithProduct[] = cart?.items ?? [];
 

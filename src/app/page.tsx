@@ -13,7 +13,7 @@ export default async function Home() {
 
   try {
     products = await getProducts("", "", "best-seller");
-  } catch (err) {
+  } catch {
     error = "Failed to load products. Please try again later.";
   }
 

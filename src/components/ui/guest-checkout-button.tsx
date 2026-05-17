@@ -1,7 +1,8 @@
-"use client"
+"use client";
 
 import { GuestCartItem } from "@/src/lib/cart/guest-cart";
 import { createGuestCheckoutSession } from "@/src/lib/stripe/checkout";
+import { CHECKOUT_GENERIC_ERROR_MESSAGE } from "@/src/lib/public-error";
 import { useTransition } from "react";
 
 type CheckoutButtonProps = {
@@ -20,14 +21,8 @@ export function GuestCheckoutButton({
     startTransition(async () => {
       try {
         await createGuestCheckoutSession(items);
-      } catch (error) {
-        console.error(error);
-
-        if (error instanceof Error) {
-          alert(error.message);
-        } else {
-          alert('Une erreur inconnue est survenue pendant le paiement.');
-        }
+      } catch {
+        alert(CHECKOUT_GENERIC_ERROR_MESSAGE);
       }
     });
   }

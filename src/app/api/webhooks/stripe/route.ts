@@ -1,4 +1,6 @@
 import prisma from "@/src/lib/prisma";
+import logger, { securityLog } from "@/src/lib/logger";
+import { plainTextResponse } from "@/src/lib/plain-text-response";
 import { OrderStatus, PaymentStatus } from "@/src/generated/prisma/enums";
 import { NextRequest } from "next/server";
 import Stripe from "stripe";
@@ -8,12 +10,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 export async function POST(req: NextRequest) {
   const payload = await req.text();
   if (!payload) {
-    return new Response("Bad request", { status: 400 });
+    return plainTextResponse("Bad request", 400);
   }
 
   const signature = req.headers.get("stripe-signature");
   if (!signature) {
-    return new Response("Bad request", { status: 400 });
+    return plainTextResponse("Bad request", 400);
   }
 
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -21,8 +23,8 @@ export async function POST(req: NextRequest) {
     // If error is on our side (no secret for example)
     // we should return a 200 and log the failure or stripe
     // will keep on trying again and again
-    console.error("Missing STRIPE_WEBHOOK_SECRET");
-    return new Response("Success", { status: 200 });
+    logger.error("stripe_webhook.missing_secret");
+    return plainTextResponse("Success", 200);
   }
 
   let event: Stripe.Event;
@@ -30,8 +32,10 @@ export async function POST(req: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(payload, signature, secret);
   } catch (err) {
-    console.error("Stripe webhook verification failed:", err);
-    return new Response("Bad request", { status: 400 });
+    securityLog("stripe_webhook.signature_verification_failed", {
+      message: err instanceof Error ? err.message : String(err),
+    });
+    return plainTextResponse("Bad request", 400);
   }
 
   if (event.type === "checkout.session.completed") {
@@ -40,13 +44,19 @@ export async function POST(req: NextRequest) {
     try {
       await handleCheckoutSessionCompleted(session);
     } catch (err) {
-      console.error("Failed to process checkout session:", err);
+      logger.error("stripe_webhook.checkout_session_failed", {
+        stripeEventId: event.id,
+        sessionId: session.id,
+        hasCartId: Boolean(session.metadata?.cartId),
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      });
       // Return 500 so Stripe retries
-      return new Response("Internal server error", { status: 500 });
+      return plainTextResponse("Internal server error", 500);
     }
   }
 
-  return new Response("Success", { status: 200 });
+  return plainTextResponse("Success", 200);
 }
 
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
