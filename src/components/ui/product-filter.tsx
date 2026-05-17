@@ -109,8 +109,8 @@ export default function ProductFilter({ origins }: { origins: string[] }) {
               {origins.map((o: string) => (
                 <li key={o}>
                   <button
-                    onClick={() => updateFilter('origin', o.toLowerCase())}
-                    className={isActive('origin', o.toLowerCase())}
+                    onClick={() => updateFilter('origin', o)}
+                    className={isActive('origin', o)}
                   >
                     {o}
                   </button>

@@ -7,6 +7,7 @@ import { getProducts } from "@/src/lib/products/product.service"
 import logger from "@/src/lib/logger"
 import { currentUser } from "@clerk/nextjs/server"
 import { Coffee } from "lucide-react"
+import prisma from "@/src/lib/prisma"
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -22,9 +23,16 @@ export default async function ProductPage({ searchParams }: PageProps) {
 
   let products: Product[] = []
   let error: string | null = null
+  let origins: any[] = []
 
   try {
     products = await getProducts(origin as string ?? '', roastLevel as string ?? '', orderBy as string ?? 'newest', true);
+    origins = await prisma.product.findMany({
+      distinct: ['origin'],
+      select: {
+        origin: true,
+      },
+    });
   } catch (err) {
     logger.error("page.products.fetch_failed", {
       origin,
@@ -36,7 +44,7 @@ export default async function ProductPage({ searchParams }: PageProps) {
     error = 'Failed to load products. Please try again later.'
   }
 
-  const origins: string[] = ["Spain", "Brazil", "Italy"]
+  origins = origins.map(p => p.origin);
 
   if (error) {
     return (
@@ -52,7 +60,7 @@ export default async function ProductPage({ searchParams }: PageProps) {
   return (
     <>
       <ProductHero />
-      <ProductFilter origins={origins} />
+      <ProductFilter origins={origins as string[]} />
       <div>
         {products.length === 0 ? (
           <div className="min-h-100 flex items-center justify-center">
