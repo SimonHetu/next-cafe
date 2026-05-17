@@ -51,9 +51,9 @@ describe("buildContentSecurityPolicy", () => {
     expect(csp).toContain("object-src 'none'");
   });
 
-  it("does not allow script unsafe-eval", () => {
+  it("allows wasm for Three.js but not full unsafe-eval in script-src", () => {
+    expect(csp).toContain("'wasm-unsafe-eval'");
     expect(csp).not.toContain("'unsafe-eval'");
-    expect(csp).not.toContain("'wasm-unsafe-eval'");
   });
 
   it("allows Clerk and Turnstile frame sources", () => {

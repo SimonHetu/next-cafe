@@ -214,7 +214,8 @@ export default function ProductDetails3D({ id, name, description, modelUrl, pric
         >
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.5} />
           <ambientLight intensity={0.5} />
-          <Environment preset="studio" />
+          {/* Same-origin HDR avoids CSP/connect-src for raw.githack.com and GitHub raw */}
+          <Environment path="/hdri/" files="studio_small_03_1k.hdr" />
           <Suspense fallback={null}>
             <Model containerRef={containerRef} modelUrl={modelUrl} />
           </Suspense>

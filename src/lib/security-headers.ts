@@ -3,10 +3,14 @@ export type SecurityHeader = { key: string; value: string };
 const clerkHosts =
   "https://*.clerk.com https://*.clerk.accounts.dev https://clerk.com  https://*.clerk-telemetry.com";
 const clerkWs = "wss://*.clerk.com wss://*.clerk.accounts.dev";
-const githack = "https://*.githack.com"
+const githack = "https://*.githack.com";
 export function buildContentSecurityPolicy(): string {
-  const scriptSrc = ["'self'", "'unsafe-inline'", clerkHosts].join(" ");
-  const connectSrc = ["'self'", clerkHosts, clerkWs, githack].join(" ");
+  // wasm-unsafe-eval: Three.js and loaders may instantiate WebAssembly (e.g. DRACO, Basis).
+  const scriptSrc = ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", clerkHosts].join(
+    " ",
+  );
+  // blob:: GLTFLoader and related code fetch textures via blob URLs.
+  const connectSrc = ["'self'", "blob:", clerkHosts, clerkWs, githack].join(" ");
 
   const directives: [string, string][] = [
     ["default-src", "'self'"],
