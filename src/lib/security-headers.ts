@@ -21,6 +21,7 @@ export function buildContentSecurityPolicy(): string {
         "'self'",
         "https://*.clerk.com",
         "https://*.clerk.accounts.dev",
+        "https://*.githack.com",
         "https://challenges.cloudflare.com",
       ].join(" "),
     ],
