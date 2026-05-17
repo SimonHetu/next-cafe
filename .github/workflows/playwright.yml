@@ -18,9 +18,13 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Prepare Clerk admin storage state
-      if: ${{ secrets.E2E_ADMIN_STORAGE_STATE != '' }}
       shell: bash
       run: |
+        if [ -z "$E2E_ADMIN_STORAGE_STATE_SECRET" ]; then
+          echo "No E2E_ADMIN_STORAGE_STATE secret configured; admin tests will be skipped."
+          exit 0
+        fi
+
         mkdir -p playwright/.auth
         printf '%s' "$E2E_ADMIN_STORAGE_STATE_SECRET" > /tmp/admin-storage-state.secret
         if base64 --decode /tmp/admin-storage-state.secret > playwright/.auth/admin.json 2>/dev/null && grep -q '"cookies"' playwright/.auth/admin.json; then
