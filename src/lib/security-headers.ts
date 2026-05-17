@@ -1,12 +1,12 @@
 export type SecurityHeader = { key: string; value: string };
 
 const clerkHosts =
-  "https://*.clerk.com https://*.clerk.accounts.dev https://clerk.com";
+  "https://*.clerk.com https://*.clerk.accounts.dev https://clerk.com  https://*.clerk-telemetry.com";
 const clerkWs = "wss://*.clerk.com wss://*.clerk.accounts.dev";
-
+const githack = "https://*.githack.com"
 export function buildContentSecurityPolicy(): string {
   const scriptSrc = ["'self'", "'unsafe-inline'", clerkHosts].join(" ");
-  const connectSrc = ["'self'", clerkHosts, clerkWs].join(" ");
+  const connectSrc = ["'self'", clerkHosts, clerkWs, githack].join(" ");
 
   const directives: [string, string][] = [
     ["default-src", "'self'"],
@@ -21,7 +21,6 @@ export function buildContentSecurityPolicy(): string {
         "'self'",
         "https://*.clerk.com",
         "https://*.clerk.accounts.dev",
-        "https://*.githack.com",
         "https://challenges.cloudflare.com",
       ].join(" "),
     ],
